@@ -19,7 +19,9 @@ yargs(hideBin(process.argv))
         type: "string",
       });
     },
-    addRepo
+    (argv) => {
+      addRepo(argv.file);
+    }
   )
   .command(
     "commit <message>",
@@ -43,7 +45,7 @@ yargs(hideBin(process.argv))
         type: "string",
       });
     },
-    commitRepo
+    revertRepo
   )
   .demandCommand(1, "You need atleast one command!")
   .help().argv;
