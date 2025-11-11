@@ -1,0 +1,16 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "Md Irfan",
+  "license": "ISC",
+  "description": "gitHub Clone",
+  "dependencies": {
+    "yargs": "^18.0.0"
+  }
+}
