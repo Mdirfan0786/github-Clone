@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "gitHub Clone",
   "dependencies": {
+    "aws-sdk": "^2.1692.0",
     "uuid": "^13.0.0",
     "yargs": "^18.0.0"
   }
