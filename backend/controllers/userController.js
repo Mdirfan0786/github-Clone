@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
+const { Credentials } = require("aws-sdk");
 
 dotenv.config();
 
@@ -18,14 +19,18 @@ async function connectClient() {
 async function signUp(req, res) {
   const { username, password, email } = req.body;
 
+  if (!username || !password || !email) {
+    return res.status(400).json({ message: "All fields are required!" });
+  }
+
   try {
     await connectClient();
     const db = client.db("githubclone");
     const usersCollection = db.collection("users");
 
-    const user = await usersCollection.findOne({ username });
+    const user = await usersCollection.findOne({ email });
     if (user) {
-      return res.status(400).json("user already exist!");
+      return res.status(400).json({ message: "user already exist!" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -42,20 +47,56 @@ async function signUp(req, res) {
 
     const result = await usersCollection.insertOne(newUser);
 
-    const token = jwt.sign({ id: result.insetId }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: result.insertedId },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
 
-    res.send({ token, userId: result.insetId });
+    res.send({ token, userId: result.insertedId });
   } catch (err) {
     console.error("Error during signup : ", err.message);
-    res.status(500).json("server Error");
+    res.status(500).json({ message: "server Error" });
   }
 }
 
-const login = (req, res) => {
-  res.send("Login...");
-};
+async function login(req, res) {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ message: "email and username are required!" });
+  }
+
+  try {
+    await connectClient();
+    const db = client.db("githubclone");
+    const usersCollection = db.collection("users");
+
+    const user = await usersCollection.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid Credentials!" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid Credentials" });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.send({ token, userId: user._id });
+  } catch (err) {
+    console.error("Error during Login : ", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
 
 const getAllUsers = (req, res) => {
   res.send("fetching all users...");
