@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
-const { Credentials } = require("aws-sdk");
+var ObjectId = require("mongodb").ObjectId;
 
 dotenv.config();
 
@@ -93,18 +93,47 @@ async function login(req, res) {
 
     res.send({ token, userId: user._id });
   } catch (err) {
-    console.error("Error during Login : ", err);
+    console.error("Error during Login : ", err.message);
     res.status(500).json({ message: "Server Error" });
   }
 }
 
-const getAllUsers = (req, res) => {
-  res.send("fetching all users...");
-};
+async function getAllUsers(req, res) {
+  try {
+    await connectClient();
+    const db = client.db("githubclone");
+    const usersCollection = db.collection("users");
 
-const getUserProfile = (req, res) => {
-  res.send("fetching all users profile...");
-};
+    const user = await usersCollection.find({}).toArray();
+    res.send(user);
+  } catch (err) {
+    console.error("Error during fetching : ", err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
+
+async function getUserProfile(req, res) {
+  const { id } = req.params;
+
+  try {
+    await connectClient();
+    const db = client.db("githubclone");
+    const usersCollection = db.collection("users");
+
+    const user = await usersCollection.findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    res.send(user);
+  } catch (err) {
+    console.error("Error during fetching : ", err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+}
 
 const updateUserProfile = (req, res) => {
   res.send("update users profile...");
