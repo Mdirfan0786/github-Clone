@@ -9,12 +9,6 @@ import logo from "../../assets/github-mark-white.svg";
 import { Link } from "react-router-dom";
 
 function Login() {
-  useEffect(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    setCurrentUser(null);
-  });
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +20,7 @@ function Login() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:3002/login", {
+      const res = await axios.post("http://localhost:3000/login", {
         email: email,
         password: password,
       });
@@ -92,13 +86,13 @@ function Login() {
             disabled={loading}
             onClick={handleLogin}
           >
-            {loading ? "Loading..." : "Signup"}
+            {loading ? "Loading..." : "Login"}
           </Button>
         </div>
 
         <div className="pass-box">
           <p>
-            Already have an account? <Link to="/signup">Sign up</Link>
+            New to GitHub? <Link to="/signup">Create an account</Link>
           </p>
         </div>
       </div>
