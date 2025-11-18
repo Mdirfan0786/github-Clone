@@ -13,7 +13,7 @@ import Signup from "./components/auth/Signup";
 import { useAuth } from "./authContext";
 
 const ProjectRoutes = () => {
-  const [currentUser, setCurrentUser] = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const ProjectRoutes = () => {
 
     if (
       !userIdFromStorage &&
-      !["/login", "signup"].includes(window.location.pathname)
+      !["/login", "/signup"].includes(window.location.pathname)
     ) {
       navigate("/login");
     }
@@ -33,28 +33,28 @@ const ProjectRoutes = () => {
     if (userIdFromStorage && window.location.pathname == "/login") {
       navigate("/");
     }
-
-    let element = useRoutes([
-      {
-        path: "/",
-        element: <Dashboard />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/signup",
-        element: <Signup />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
-      },
-    ]);
-
-    return element;
   }, [currentUser, navigate, setCurrentUser]);
+
+  let element = useRoutes([
+    {
+      path: "/",
+      element: <Dashboard />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/signup",
+      element: <Signup />,
+    },
+    {
+      path: "/profile",
+      element: <Profile />,
+    },
+  ]);
+
+  return element;
 };
 
 export default ProjectRoutes;
