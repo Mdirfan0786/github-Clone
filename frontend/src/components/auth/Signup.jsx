@@ -23,9 +23,9 @@ function Signup() {
       setLoading(true);
 
       const res = await axios.post("http://localhost:3002/signup", {
-        email,
-        username,
-        password,
+        email: email,
+        username: username,
+        password: password,
       });
 
       localStorage.setItem("token", res.data.token);
@@ -54,7 +54,7 @@ function Signup() {
           <div style={{ padding: 10 }}>
             <PageHeader>
               <PageHeader.TitleArea variant="large">
-                <PageHeader.Title>Sign Up</PageHeader.Title>
+                <PageHeader.Title>Sign Up for GitHub</PageHeader.Title>
               </PageHeader.TitleArea>
             </PageHeader>
           </div>
