@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./dashboard.css";
+import Navbar from "../navbar";
 
 function Dashboard() {
   const [repositories, setRepositories] = useState([]);
@@ -48,52 +50,56 @@ function Dashboard() {
   }, [searchQuery, repositories]);
 
   return (
-    <section id="dashboard">
-      <aside>
-        <h3>Suggested Repositories</h3>
+    <>
+      <Navbar />
+      <section id="dashboard">
+        <aside>
+          <h3>Suggested Repositories</h3>
 
-        <div id="search">
-          <input
-            type="text"
-            value={searchQuery}
-            placeholder="Search..."
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+          {suggestedRepositories.map((repo) => (
+            <div key={repo._id}>
+              <h4>{repo.name}</h4>
+              <h4>{repo.description}</h4>
+            </div>
+          ))}
+        </aside>
 
-        {suggestedRepositories.map((repo) => (
-          <div key={repo._id}>
-            <h4>{repo.name}</h4>
-            <h4>{repo.description}</h4>
+        <main>
+          <h3>Your Repositories</h3>
+
+          <div id="search">
+            <input
+              type="text"
+              value={searchQuery}
+              placeholder="Search..."
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        ))}
-      </aside>
 
-      <main>
-        <h3>Your Repositories</h3>
-        {searchResults.map((repo) => (
-          <div key={repo._id}>
-            <h4>{repo.name}</h4>
-            <h4>{repo.description}</h4>
-          </div>
-        ))}
-      </main>
+          {searchResults.map((repo) => (
+            <div key={repo._id}>
+              <h4>{repo.name}</h4>
+              <h4>{repo.description}</h4>
+            </div>
+          ))}
+        </main>
 
-      <aside>
-        <h3>Upcoming Events!</h3>
-        <ul>
-          <li>
-            <p>Tech Conference - Nov 25</p>
-          </li>
-          <li>
-            <p>Developer Meetup - Dec 5</p>
-          </li>
-          <li>
-            <p>React Summit - Jan 25</p>
-          </li>
-        </ul>
-      </aside>
-    </section>
+        <aside>
+          <h3>Upcoming Events!</h3>
+          <ul>
+            <li>
+              <p>Tech Conference - Nov 25</p>
+            </li>
+            <li>
+              <p>Developer Meetup - Dec 5</p>
+            </li>
+            <li>
+              <p>React Summit - Jan 25</p>
+            </li>
+          </ul>
+        </aside>
+      </section>
+    </>
   );
 }
 
