@@ -1,0 +1,128 @@
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+.profile-page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  color: whitesmoke;
+  width: 100vw;
+  /* flex-wrap: wrap; */
+}
+
+.user-profile-section {
+  width: 25vw;
+  /* min-height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  padding: 40px 10px;
+}
+
+.heat-map-section {
+  width: 75vw;
+  font-size: 1.25rem;
+}
+
+.heat-map-section svg {
+  width: 80vw;
+  height: 80vw;
+}
+
+.user-repo-section {
+  margin: 0px auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.user-name {
+  /* width: 250px; */
+  margin: 0.625rem 1.25rem 0.625rem 0.625rem;
+  /* margin: 10px auto; */
+}
+
+.profile-image {
+  margin: 10px auto;
+  width: 6.25rem;
+  height: 6.25rem;
+  border-radius: 50%;
+  background-color: grey;
+  background-image: url(../../assets/github-mark-white.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.name {
+  text-align: center;
+}
+
+.follow-btn {
+  background-color: #20272d;
+  width: 250px;
+  margin: 10px auto;
+  height: 40px;
+  border-radius: 10px;
+  color: whitesmoke;
+}
+
+.follower {
+  display: flex;
+  justify-content: center;
+  width: 250px;
+  height: 30px;
+  gap: 10px;
+  margin: 10px auto;
+}
+
+.repo-card-wrapper {
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 40px 20px;
+}
+
+.repo {
+  border: 0.5px solid grey;
+  border-radius: 10px;
+  width: 400px;
+  height: 210px;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.repo-name {
+  cursor: pointer;
+  color: #408ced;
+  font-size: 20px;
+}
+
+.description {
+  color: grey;
+  font-size: 15px;
+}
+
+@media screen and (max-width: 750px) {
+  .repo {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 570px) {
+  .user-profile-section {
+    margin: auto;
+  }
+
+  .profile-page-wrapper {
+    display: block;
+  }
+}
+
+#logout:hover {
+  border: 1px solid white;
+}
