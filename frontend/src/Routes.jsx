@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useRoutes } from "react-router-dom";
 
 // Pages
@@ -7,6 +7,8 @@ import Dashboard from "./components/daashboard/Dashboard";
 import Profile from "./components/user/Profile";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
+import CreateRepo from "./components/repo/CreateRepo";
+import StarRepo from "./components/repo/starRepo";
 
 // Auth Context
 
@@ -51,6 +53,14 @@ const ProjectRoutes = () => {
     {
       path: "/profile",
       element: <Profile />,
+    },
+    {
+      path: "/createRepo",
+      element: <CreateRepo />,
+    },
+    {
+      path: "/:username/starRepo",
+      element: <StarRepo />,
     },
   ]);
 

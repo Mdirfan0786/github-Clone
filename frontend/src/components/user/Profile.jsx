@@ -7,6 +7,7 @@ import { UnderlineNav } from "@primer/react";
 import { BookIcon, RepoIcon } from "@primer/octicons-react";
 import HeatMapProfile from "./HeatMap";
 import { useAuth } from "../../authContext";
+import Box from "@mui/material/Box";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -34,38 +35,42 @@ const Profile = () => {
   return (
     <>
       <Navbar />
-      <UnderlineNav aria-label="Repository">
-        <UnderlineNav.Item
-          aria-current="page"
-          icon={BookIcon}
-          sx={{
-            backgroundColor: "transparent",
-            color: "white",
-            "&:hover": {
-              textDecoration: "underline",
+      <Box
+        sx={{ backgroundColor: "#010409", borderBottom: "1px solid #30363d" }}
+      >
+        <UnderlineNav aria-label="Repository">
+          <UnderlineNav.Item
+            aria-current="page"
+            icon={BookIcon}
+            sx={{
+              backgroundColor: "transparent",
               color: "white",
-            },
-          }}
-        >
-          Overview
-        </UnderlineNav.Item>
+              "&:hover": {
+                textDecoration: "underline",
+                color: "white",
+              },
+            }}
+          >
+            Overview
+          </UnderlineNav.Item>
 
-        <UnderlineNav.Item
-          onClick={() => navigate("/repo")}
-          icon={RepoIcon}
-          sx={{
-            backgroundColor: "transparent",
-            color: "whitesmoke",
-            "&:hover": {
-              textDecoration: "underline",
-              color: "white",
-            },
-          }}
-        >
-          Starred Repositories
-        </UnderlineNav.Item>
-      </UnderlineNav>
-
+          <UnderlineNav.Item
+            href=""
+            onClick={() => navigate(`/${userDetails.username}/starRepo`)}
+            icon={RepoIcon}
+            sx={{
+              backgroundColor: "transparent",
+              color: "whitesmoke",
+              "&:hover": {
+                textDecoration: "underline",
+                color: "white",
+              },
+            }}
+          >
+            Starred Repositories
+          </UnderlineNav.Item>
+        </UnderlineNav>
+      </Box>
       <button
         onClick={() => {
           localStorage.removeItem("token");

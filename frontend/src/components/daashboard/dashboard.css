@@ -3,5 +3,64 @@
   height: 100vh;
   width: 100vw;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  background-color: #010409;
+  border-top: 1px solid #30363d;
+}
+
+#dashboard-left {
+  background-color: #0d1117;
+  width: 20vw;
+  padding: 1rem 1rem 0 2rem;
+}
+
+#search-left {
+  width: 100%;
+}
+
+#dashboard-main {
+  width: 60vw;
+  padding: 2.5rem 2.5rem 0;
+}
+
+.topRepo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topRepoIcon {
+  display: flex;
+  align-items: center;
+  gap: 1;
+  height: 2rem;
+  width: 3.5rem;
+  border-radius: 8px;
+  color: #fff;
+  background-color: #29903b;
+}
+
+.topRepoIcon:hover {
+  color: #fff;
+}
+
+.topRepoIcon .icon {
+  font-size: 1.3rem;
+  margin-left: 2px;
+}
+
+.topRepoIcon p {
+  font-size: 0.8rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #30363d;
+  background-color: #151b23;
+}
+
+#dashboard-right {
+  width: 20vw;
+  padding: 2.5rem 2.5rem 0 0;
 }
