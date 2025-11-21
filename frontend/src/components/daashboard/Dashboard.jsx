@@ -5,6 +5,7 @@ import Navbar from "../navbar";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom";
 import githubLogo from "../../assets/github-mark-white.svg";
+import { useSearch } from "../../SearchContext";
 
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -18,6 +19,9 @@ function Dashboard() {
   const [userDetails, setUserDetails] = useState({ username: "Md Irfan" });
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [searchHomeResults, setSearchHomeResults] = useState([]);
+
+  const { globalSearch } = useSearch();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -77,6 +81,19 @@ function Dashboard() {
     }
   }, [searchQuery, repositories]);
 
+  // Search Filter For Home
+
+  useEffect(() => {
+    if (globalSearch === "") {
+      setSearchHomeResults(suggestedRepositories);
+    } else {
+      const filtered = suggestedRepositories.filter((repo) =>
+        repo.name.toLowerCase().includes(globalSearch.toLowerCase())
+      );
+      setSearchHomeResults(filtered);
+    }
+  }, [globalSearch, suggestedRepositories]);
+
   return (
     <>
       <Navbar />
@@ -122,7 +139,7 @@ function Dashboard() {
         <main id="dashboard-main">
           <h2>Home</h2>
 
-          {suggestedRepositories.map((repo) => (
+          {searchHomeResults.map((repo) => (
             <Card
               sx={{
                 width: "100%",
