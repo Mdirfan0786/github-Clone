@@ -425,6 +425,7 @@ export default function Navbar() {
                 borderRadius: 2,
                 "&:hover": {
                   backgroundColor: "#21262d",
+                  color: "#fff",
                 },
               }}
             >
@@ -443,6 +444,7 @@ export default function Navbar() {
                 borderRadius: 2,
                 "&:hover": {
                   backgroundColor: "#21262d",
+                  color: "#fff",
                 },
               }}
             >
