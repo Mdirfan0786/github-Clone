@@ -8,6 +8,7 @@ import { BookIcon, RepoIcon } from "@primer/octicons-react";
 import HeatMapProfile from "./HeatMap";
 import { useAuth } from "../../authContext";
 import Box from "@mui/material/Box";
+import Footer from "../../footer";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -105,6 +106,8 @@ const Profile = () => {
           <HeatMapProfile />
         </div>
       </div>
+
+      <Footer />
     </>
   );
 };

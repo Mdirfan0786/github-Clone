@@ -5,8 +5,10 @@ import Navbar from "../navbar";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom";
 import githubLogo from "../../assets/github-mark-white.svg";
+import gitpfp from "../../assets/git_pfp.jpg";
 import { useSearch } from "../../SearchContext";
 
+import { Box } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -98,7 +100,8 @@ function Dashboard() {
     <>
       <Navbar />
       <section id="dashboard">
-        <aside id="dashboard-left">
+        {/* left Dashboard / Top repositories */}
+        <aside id="dashboard-left" sx={{ border: " 1px solid #30363d" }}>
           <div className="topRepo">
             <h5>Top Repositories</h5>
             <Link to={"/createRepo"} className="topRepoIcon">
@@ -126,9 +129,13 @@ function Dashboard() {
                 }}
               >
                 <img
-                  src={githubLogo}
+                  src={gitpfp}
                   alt="GitHub Logo"
-                  style={{ width: 20, marginRight: "0.5rem" }}
+                  style={{
+                    width: 20,
+                    marginRight: "0.5rem",
+                    borderRadius: "1.25rem",
+                  }}
                 />
                 {userDetails.username}/{repo.name}
               </h4>
@@ -136,6 +143,7 @@ function Dashboard() {
           ))}
         </aside>
 
+        {/* Home Section  */}
         <main id="dashboard-main">
           <h2>Home</h2>
 
@@ -166,6 +174,7 @@ function Dashboard() {
           ))}
         </main>
 
+        {/* changelog Events  */}
         <aside id="dashboard-right">
           <Card
             sx={{
@@ -187,76 +196,105 @@ function Dashboard() {
                 Latest from our changelog!
               </Typography>
 
-              <Typography
-                gutterBottom
-                variant="p"
-                component="div"
-                sx={{ fontWeight: "500", margin: "1rem 0" }}
+              <Box
+                sx={{
+                  padding: "0.6rem",
+                  borderRadius: "0.5rem",
+                  transition: "0.2s ease",
+                  "&:hover": {
+                    backgroundColor: "#161b22",
+                    border: "1px solid #30363d",
+                    cursor: "pointer",
+                  },
+                }}
               >
-                <Typography
-                  gutterBottom
-                  variant="p"
-                  component="div"
-                  sx={{ color: "#494f56ff", fontWeight: "500" }}
-                >
+                <Typography sx={{ color: "#494f56ff", fontWeight: "500" }}>
                   Nov 25
                 </Typography>
                 <Typography
-                  variant="body2"
-                  sx={{
-                    color: "#fff",
-                    fontSize: "0.9rem",
-                    fontWeight: "200",
-                  }}
+                  sx={{ color: "#fff", fontSize: "0.9rem", fontWeight: "200" }}
                 >
                   Tech Conference
                 </Typography>
-              </Typography>
-
-              <Typography
-                gutterBottom
-                variant="p"
-                component="div"
-                sx={{ fontWeight: "500", margin: "1rem 0" }}
-              >
                 <Typography
-                  gutterBottom
-                  variant="p"
-                  component="div"
-                  sx={{ color: "#494f56ff", fontWeight: "500" }}
+                  sx={{
+                    color: "#9ca3af",
+                    fontSize: "0.8rem",
+                    marginTop: "0.3rem",
+                  }}
                 >
+                  A global event focused on AI, cloud, and cutting-edge
+                  technologies.
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  padding: "0.6rem",
+                  borderRadius: "0.5rem",
+                  transition: "0.2s ease",
+                  marginTop: "1rem",
+                  "&:hover": {
+                    backgroundColor: "#161b22",
+                    border: "1px solid #30363d",
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                <Typography sx={{ color: "#494f56ff", fontWeight: "500" }}>
                   Dec 5
                 </Typography>
                 <Typography
-                  variant="body2"
                   sx={{ color: "#fff", fontSize: "0.9rem", fontWeight: "200" }}
                 >
                   Developer Meetup
                 </Typography>
-              </Typography>
-
-              <Typography
-                gutterBottom
-                variant="p"
-                component="div"
-                sx={{ fontWeight: "500", margin: "1rem 0" }}
-              >
                 <Typography
-                  gutterBottom
-                  variant="p"
-                  component="div"
-                  sx={{ color: "#494f56ff", fontWeight: "500" }}
+                  sx={{
+                    color: "#9ca3af",
+                    fontSize: "0.8rem",
+                    marginTop: "0.3rem",
+                  }}
                 >
+                  Meet developers, share ideas, and collaborate on open-source
+                  projects.
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  padding: "0.6rem",
+                  borderRadius: "0.5rem",
+                  transition: "0.2s ease",
+                  marginTop: "1rem",
+                  "&:hover": {
+                    backgroundColor: "#161b22",
+                    border: "1px solid #30363d",
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                <Typography sx={{ color: "#494f56ff", fontWeight: "500" }}>
                   Jan 25
                 </Typography>
                 <Typography
-                  variant="body2"
                   sx={{ color: "#fff", fontSize: "0.9rem", fontWeight: "200" }}
                 >
                   React Summit
                 </Typography>
-              </Typography>
+                <Typography
+                  sx={{
+                    color: "#9ca3af",
+                    fontSize: "0.8rem",
+                    marginTop: "0.3rem",
+                  }}
+                >
+                  A deep-dive into modern React, performance patterns, and best
+                  practices.
+                </Typography>
+              </Box>
             </CardContent>
+
             <CardActions>
               <Button size="small">View changelog</Button>
             </CardActions>

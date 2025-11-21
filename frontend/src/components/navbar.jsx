@@ -19,6 +19,7 @@ import {
   ListItemText,
 } from "@mui/material";
 
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import PeopleIcon from "@mui/icons-material/People";
@@ -32,8 +33,10 @@ import StoreIcon from "@mui/icons-material/Store";
 import CategoryIcon from "@mui/icons-material/Category";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link, useLocation } from "react-router-dom";
+
 import { useAuth } from "../authContext";
 import { useSearch } from "../SearchContext";
+import gitpfp from "../assets/git_pfp.jpg";
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,7 +56,7 @@ export default function Navbar() {
 
   const getPageTitle = () => {
     if (location.pathname.includes("profile")) return "Profile";
-    if (location.pathname.includes("createRepo")) return "Repositories";
+    if (location.pathname.includes("createRepo")) return "New Repositories";
     if (location.pathname.includes("stars")) return "Stars";
     return "Dashboard";
   };
@@ -92,6 +95,7 @@ export default function Navbar() {
           height: "3.8rem",
           display: "flex",
           justifyContent: "center",
+          borderBottom: "1px solid #30363d",
         }}
       >
         <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
@@ -218,7 +222,7 @@ export default function Navbar() {
               <NotificationsIcon sx={{ color: "#fff" }} />
             </IconButton>
             <Avatar
-              src="../../assets/github-mark-white.svg"
+              src={gitpfp}
               sx={{ width: 35, height: 35, cursor: "pointer" }}
               onClick={handleOpen}
             />
@@ -239,13 +243,37 @@ export default function Navbar() {
               },
             }}
           >
-            <Box sx={{ padding: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>
-                {userDetails.email}
-              </Typography>
-              <Typography sx={{ fontSize: "0.8rem", color: "#8b949e" }}>
-                {userDetails.username}
-              </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginLeft: "0.4rem",
+                }}
+              >
+                <Avatar
+                  src={gitpfp}
+                  sx={{ width: 35, height: 35, cursor: "pointer" }}
+                />
+                <Box sx={{ padding: 2 }}>
+                  <Typography sx={{ fontWeight: 600 }}>
+                    {userDetails.username}
+                  </Typography>
+                  <Typography sx={{ fontSize: "0.8rem", color: "#8b949e" }}>
+                    {userDetails.email}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ marginRight: "1rem" }}>
+                <CompareArrowsIcon />
+              </Box>
             </Box>
 
             <Divider sx={{ borderColor: "#30363d" }} />
@@ -464,10 +492,13 @@ export default function Navbar() {
           ].map((text) => (
             <ListItem key={text} disablePadding>
               <ListItemButton
+                component={Link}
+                to={"/"}
                 sx={{
                   borderRadius: 2,
                   "&:hover": {
                     backgroundColor: "#21262d",
+                    color: "#fff",
                   },
                 }}
               >
