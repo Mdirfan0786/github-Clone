@@ -51,7 +51,7 @@ function Login() {
           <div style={{ padding: 10 }}>
             <PageHeader>
               <PageHeader.TitleArea variant="large">
-                <PageHeader.Title>Sign Up to GitHub</PageHeader.Title>
+                <PageHeader.Title>Login to GitHub</PageHeader.Title>
               </PageHeader.TitleArea>
             </PageHeader>
           </div>

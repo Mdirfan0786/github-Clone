@@ -111,8 +111,6 @@ export default function Navbar() {
                 cursor: "pointer",
               },
             }}
-            component={Link}
-            to={"/"}
           >
             <IconButton
               sx={{ border: "1px solid #30363d" }}
@@ -121,7 +119,13 @@ export default function Navbar() {
               <MenuIcon sx={{ color: "white" }} />
             </IconButton>
 
-            <GitHubIcon sx={{ fontSize: 35 }} />
+            <IconButton
+              component={Link}
+              to={"/"}
+              sx={{ color: "#fff", "&:hover": { color: "#fff" } }}
+            >
+              <GitHubIcon sx={{ fontSize: 35 }} />
+            </IconButton>
 
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {getPageTitle()}

@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "../../footer";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -25,20 +27,75 @@ import Navbar from "../navbar";
 import OwnerPfp from "../../assets/git_pfp.jpg";
 
 function CreateRepo() {
+  const [userInfo, setUserInfo] = useState({ username: "Md Irfan" });
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [visibility, setVisibility] = useState(false);
   const [privacy, setPrivacy] = useState("Public");
-  const [open, setOpen] = useState(false);
 
   const [isOn, setIsOn] = useState(true);
   const [anchorAdd, setAnchorAdd] = useState(null);
   const [privacyAnchor, setPrivacyAnchor] = useState(null);
+  const [gitIgnore, setGitIgnore] = useState(null);
+  const [license, setLicence] = useState(null);
 
   const openAdd = Boolean(anchorAdd);
   const openPrivacy = Boolean(privacyAnchor);
+  const openGitIgnore = Boolean(gitIgnore);
+  const openLicense = Boolean(license);
+
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     setIsOn((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const userId = localStorage.getItem("userId");
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/userProfile/${userId}`
+        );
+
+        setUserInfo(response.data);
+      } catch (err) {
+        console.error("cannot fetch user datails: ", err);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
+  // handle Create Repo - send data to database
+
+  let handleSubmitCreateRepo = async () => {
+    const userId = localStorage.getItem("userId");
+
+    if (!name.trim()) {
+      return alert("Repository name is required!");
+    }
+
+    const repoData = {
+      owner: userId,
+      name: name,
+      description: description,
+      content: [],
+      visibility: visibility,
+      issues: [],
+    };
+    console.log(repoData);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/repo/create",
+        repoData
+      );
+
+      navigate("/");
+    } catch (err) {
+      console.error("Error while creating New Repository : ", err);
+    }
   };
   return (
     <>
@@ -107,6 +164,7 @@ function CreateRepo() {
               alignItems: "center",
             }}
           >
+            {/* Owner */}
             <Box sx={{ width: "20%", marginRight: "3rem" }}>
               <Box>
                 <Typography>Owner*</Typography>
@@ -125,11 +183,12 @@ function CreateRepo() {
                     justifyContent: "space-between",
                     alignItems: "center",
                     padding: "0 0.5rem",
+                    textTransform: "none",
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Avatar src={OwnerPfp} sx={{ width: 22, height: 22 }} />
-                    <Typography>Md Irfan</Typography>
+                    <Typography>{userInfo.username}</Typography>
                   </Box>
 
                   <ArrowDropDownIcon sx={{ color: "#fff" }} />
@@ -169,18 +228,20 @@ function CreateRepo() {
                   <Avatar src={OwnerPfp} sx={{ width: 22, height: 22 }} />
 
                   <Typography sx={{ fontSize: "0.9rem", marginLeft: "0.5rem" }}>
-                    username
+                    {userInfo.username}
                   </Typography>
                 </MenuItem>
               </Menu>
             </Box>
 
+            {/* Repository Name */}
             <Box sx={{ width: "80%" }}>
               <Box>
-                <Typography>Repository Name*</Typography>
+                <Typography>Repository Name *</Typography>
               </Box>
-
               <InputBase
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 sx={{
                   marginTop: "0.5rem",
                   width: "100%",
@@ -189,6 +250,7 @@ function CreateRepo() {
                   color: "#fff",
                   padding: "0.1rem 1rem",
                 }}
+                required
               />
             </Box>
           </Box>
@@ -199,6 +261,7 @@ function CreateRepo() {
             </Typography>
           </Box>
 
+          {/* Description */}
           <Box
             sx={{ paddingBottom: "2rem", borderBottom: "1px solid #30363d" }}
           >
@@ -210,6 +273,11 @@ function CreateRepo() {
               multiline
               minRows={5}
               placeholder="Repository DescriptionAdd a short description (optional)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              inputProps={{
+                maxLength: 350,
+              }}
               sx={{
                 marginTop: "0.5rem",
                 width: "100%",
@@ -225,7 +293,7 @@ function CreateRepo() {
                 variant="body2"
                 sx={{ color: "#9198A1", marginTop: "0.4rem" }}
               >
-                0/350 characters
+                {description.length}/350 characters
               </Typography>
             </Box>
           </Box>
@@ -233,6 +301,8 @@ function CreateRepo() {
           <Box sx={{ margin: "2rem 0 1rem" }}>
             <Typography variant="h5">Configuration</Typography>
           </Box>
+
+          {/* Choose Visibility - Privacy {Public/private} */}
 
           <Box
             sx={{
@@ -285,9 +355,14 @@ function CreateRepo() {
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <PublicIcon />
-                    <Typography sx={{ textTransform: "lowercase" }}>
-                      Public
+                    {privacy === "Public" ? (
+                      <PublicIcon />
+                    ) : (
+                      <HttpsOutlinedIcon />
+                    )}
+
+                    <Typography sx={{ textTransform: "none" }}>
+                      {privacy}
                     </Typography>
                   </Box>
 
@@ -313,7 +388,11 @@ function CreateRepo() {
                 }}
               >
                 <MenuItem
-                  onClick={() => setPrivacyAnchor(null)}
+                  onClick={() => {
+                    setPrivacy("Public");
+                    setVisibility(false);
+                    setPrivacyAnchor(null);
+                  }}
                   sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -333,7 +412,7 @@ function CreateRepo() {
                     <Typography
                       sx={{ fontSize: "0.9rem", marginLeft: "0.5rem" }}
                     >
-                      Public
+                      {privacy}
                     </Typography>
                   </Box>
 
@@ -354,7 +433,11 @@ function CreateRepo() {
                   </Box>
                 </MenuItem>
                 <MenuItem
-                  onClick={() => setPrivacyAnchor(null)}
+                  onClick={() => {
+                    setPrivacy("Private");
+                    setVisibility(true);
+                    setPrivacyAnchor(null);
+                  }}
                   sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -397,47 +480,263 @@ function CreateRepo() {
 
           <Box
             sx={{
-              widows: "100%",
-              height: "4rem",
-              borderRadius: "0.3rem",
+              border: "2px solid #fff",
+              borderRadius: "0.5rem",
               border: "1px solid #50555A",
-              marginBottom: "1rem",
-              padding: "0.75rem",
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "center",
               alignItems: "center",
+              flexDirection: "column",
             }}
           >
-            <Box>
+            {/* Add README.md */}
+            <Box
+              sx={{
+                width: "97%",
+                height: "4rem",
+                borderBottom: "1px solid #50555A",
+                padding: "0.75rem 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <Box>
-                <Typography variant="h7" sx={{ fontWeight: "500" }}>
-                  Add README
-                </Typography>
+                <Box>
+                  <Typography variant="h7" sx={{ fontWeight: "500" }}>
+                    Add README
+                  </Typography>
+                </Box>
+
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#9198A1",
+                      fontWeight: "200",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    READMEs can be used as longer descriptions.
+                  </Typography>
+                </Box>
               </Box>
 
               <Box>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "#9198A1",
-                    fontWeight: "200",
-                    fontSize: "0.8rem",
-                  }}
-                >
-                  READMEs can be used as longer descriptions.
-                </Typography>
+                <Box sx={{ marginTop: "0.5rem" }}>
+                  <Button sx={{ color: "#fff" }} onClick={handleToggle}>
+                    {isOn ? (
+                      <ToggleOffOutlinedIcon sx={{ fontSize: "3rem" }} />
+                    ) : (
+                      <ToggleOnIcon sx={{ fontSize: "3rem" }} />
+                    )}
+                  </Button>
+                </Box>
               </Box>
             </Box>
 
-            <Box>
-              <Box sx={{ marginTop: "0.5rem" }}>
-                <Button sx={{ color: "#fff" }} onClick={handleToggle}>
-                  {isOn ? (
-                    <ToggleOffOutlinedIcon sx={{ fontSize: "3rem" }} />
-                  ) : (
-                    <ToggleOnIcon sx={{ fontSize: "3rem" }} />
-                  )}
-                </Button>
+            {/* Add .gitignore */}
+            <Box
+              sx={{
+                width: "97%",
+                height: "4rem",
+                borderBottom: "1px solid #50555A",
+                padding: "0.75rem 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box>
+                <Box>
+                  <Typography variant="h7" sx={{ fontWeight: "500" }}>
+                    Add .gitignore
+                  </Typography>
+                </Box>
+
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#9198A1",
+                      fontWeight: "200",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    .gitignore tells git which files not to track.
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box>
+                <Box sx={{ marginTop: "0.5rem" }}>
+                  <Button
+                    onClick={(e) => setGitIgnore(e.currentTarget)}
+                    style={{
+                      backgroundColor: "#262C36",
+                      border: "1px solid #50555A",
+                      height: "2.3rem",
+                      width: "8rem",
+                      color: "#fff",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "0 0.5rem",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography
+                        sx={{ textTransform: "lowercase", fontSize: "0.8rem" }}
+                      >
+                        No .gitignore
+                      </Typography>
+                    </Box>
+
+                    <ArrowDropDownIcon
+                      sx={{ color: "#7a7676ff", marginLeft: "0.4rem" }}
+                    />
+                  </Button>
+                </Box>
+
+                <Menu
+                  anchorEl={gitIgnore}
+                  open={openGitIgnore}
+                  onClose={() => setGitIgnore(null)}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: "#010409",
+                      color: "white",
+                      width: "12rem",
+                      border: "1px solid #30363d",
+                      borderRadius: "0.8rem",
+                      padding: "0.4rem",
+                    },
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => setGitIgnore(null)}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "start",
+                      "&:hover": {
+                        backgroundColor: "#21262d",
+                        color: "#fff",
+                        borderRadius: 2,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Typography
+                        sx={{ fontSize: "0.9rem", marginLeft: "0.5rem" }}
+                      >
+                        No .gitignore
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </Box>
+
+            {/* Add Licence */}
+            <Box
+              sx={{
+                width: "97%",
+                height: "4rem",
+                padding: "0.75rem 0 ",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box>
+                <Box>
+                  <Typography variant="h7" sx={{ fontWeight: "500" }}>
+                    Add license
+                  </Typography>
+                </Box>
+
+                <Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#9198A1",
+                      fontWeight: "200",
+                      fontSize: "0.8rem",
+                    }}
+                  >
+                    Licenses explain how others can use your code.
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box>
+                <Box sx={{ marginTop: "0.5rem" }}>
+                  <Button
+                    onClick={(e) => setLicence(e.currentTarget)}
+                    style={{
+                      backgroundColor: "#262C36",
+                      border: "1px solid #50555A",
+                      height: "2.3rem",
+                      width: "8rem",
+                      color: "#fff",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "0 0.5rem",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography
+                        sx={{ textTransform: "lowercase", fontSize: "0.8rem" }}
+                      >
+                        No .Licenses
+                      </Typography>
+                    </Box>
+
+                    <ArrowDropDownIcon
+                      sx={{ color: "#7a7676ff", marginLeft: "0.4rem" }}
+                    />
+                  </Button>
+                </Box>
+
+                <Menu
+                  anchorEl={license}
+                  open={openLicense}
+                  onClose={() => setLicence(null)}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: "#010409",
+                      color: "white",
+                      width: "12rem",
+                      border: "1px solid #30363d",
+                      borderRadius: "0.8rem",
+                      padding: "0.4rem",
+                    },
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => setLicence(null)}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "start",
+                      "&:hover": {
+                        backgroundColor: "#21262d",
+                        color: "#fff",
+                        borderRadius: 2,
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Typography
+                        sx={{ fontSize: "0.9rem", marginLeft: "0.5rem" }}
+                      >
+                        No .Licenses
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                </Menu>
               </Box>
             </Box>
           </Box>
@@ -452,13 +751,13 @@ function CreateRepo() {
             <Button
               variant="contained"
               sx={{ backgroundColor: "#29903B", borderRadius: "0.5rem" }}
+              onClick={handleSubmitCreateRepo}
             >
               Create Repository
             </Button>
           </Box>
         </Box>
       </Box>
-
       <Footer />
     </>
   );
