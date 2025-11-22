@@ -4,6 +4,7 @@ import { useAuth } from "../../authContext";
 
 import { PageHeader, Button } from "@primer/react";
 import "./auth.css";
+import server from "../../environment";
 
 import logo from "../../assets/github-mark-white.svg";
 import { Link } from "react-router-dom";
@@ -22,7 +23,7 @@ function Signup() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:3000/signup", {
+      const res = await axios.post(`${server}/signup`, {
         email: email,
         username: username,
         password: password,

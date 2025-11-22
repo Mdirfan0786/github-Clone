@@ -9,6 +9,7 @@ import HeatMapProfile from "./HeatMap";
 import { useAuth } from "../../authContext";
 import Box from "@mui/material/Box";
 import Footer from "../../footer";
+import server from "../../environment";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,9 +22,7 @@ const Profile = () => {
 
       if (userId) {
         try {
-          const response = await axios.get(
-            `http://localhost:3000/userProfile/${userId}`
-          );
+          const response = await axios.get(`${server}/userProfile/${userId}`);
           setUserDetails(response.data);
         } catch (err) {
           console.error("Cannot fetch user details: ", err);

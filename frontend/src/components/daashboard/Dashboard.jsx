@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import githubLogo from "../../assets/github-mark-white.svg";
 import gitpfp from "../../assets/git_pfp.jpg";
 import { useSearch } from "../../SearchContext";
+import server from "../../environment";
 
 import { Box } from "@mui/material";
 import Card from "@mui/material/Card";
@@ -31,9 +32,7 @@ function Dashboard() {
 
       if (userId) {
         try {
-          const response = await axios.get(
-            `http://localhost:3000/userProfile/${userId}`
-          );
+          const response = await axios.get(`${server}/userProfile/${userId}`);
           setUserDetails(response.data);
         } catch (err) {
           console.error("Cannot fetch user details: ", err);
@@ -48,9 +47,7 @@ function Dashboard() {
 
     const fetchRepositories = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/repo/user/${userId}`
-        );
+        const response = await axios.get(`${server}/repo/user/${userId}`);
         setRepositories(response.data.repositories);
         setSearchResults(response.data.repositories);
       } catch (err) {
@@ -60,7 +57,7 @@ function Dashboard() {
 
     const fetchSuggestedRepositories = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/repo/all");
+        const response = await axios.get(`${server}/repo/all`);
         setSuggestedRepositories(response.data);
       } catch (err) {
         console.error("Error while fetching suggested repositories : ", err);

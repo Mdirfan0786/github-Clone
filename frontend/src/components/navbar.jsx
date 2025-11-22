@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import server from "../environment";
 import {
   AppBar,
   Box,
@@ -72,9 +73,7 @@ export default function Navbar() {
 
       if (userId) {
         try {
-          const response = await axios.get(
-            `http://localhost:3000/userProfile/${userId}`
-          );
+          const response = await axios.get(`${server}/userProfile/${userId}`);
 
           setUserDetails(response.data);
         } catch (err) {

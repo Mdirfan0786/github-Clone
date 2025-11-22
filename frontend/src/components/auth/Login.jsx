@@ -4,6 +4,7 @@ import { useAuth } from "../../authContext";
 
 import { PageHeader, Button } from "@primer/react";
 import "./auth.css";
+import server from "../../environment";
 
 import logo from "../../assets/github-mark-white.svg";
 import { Link } from "react-router-dom";
@@ -20,7 +21,7 @@ function Login() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:3000/login", {
+      const res = await axios.post(`${server}/login`, {
         email: email,
         password: password,
       });

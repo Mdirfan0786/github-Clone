@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Footer from "../../footer";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import server from "../../environment";
 
 import {
   Box,
@@ -55,9 +56,7 @@ function CreateRepo() {
       const userId = localStorage.getItem("userId");
 
       try {
-        const response = await axios.get(
-          `http://localhost:3000/userProfile/${userId}`
-        );
+        const response = await axios.get(`${server}/userProfile/${userId}`);
 
         setUserInfo(response.data);
       } catch (err) {
@@ -87,10 +86,7 @@ function CreateRepo() {
     };
     console.log(repoData);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/repo/create",
-        repoData
-      );
+      const response = await axios.post(`${server}/repo/create`, repoData);
 
       navigate("/");
     } catch (err) {
