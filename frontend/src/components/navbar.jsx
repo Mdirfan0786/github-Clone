@@ -68,24 +68,17 @@ export default function Navbar() {
   // Fetching User Details
 
   useEffect(() => {
+    const userId = localStorage.getItem("userId");
+
     const fetchUserDetails = async () => {
-      const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
-
-      if (userId && token) {
-        try {
-          const response = await axios.get(`${server}/userProfile/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          setUserDetails(response.data);
-        } catch (err) {
-          console.error("Error while fetching UserDateils : ", err);
-        }
+      try {
+        const response = await axios.get(`${server}/userProfile/${userId}`);
+        setUserDetails(response.data);
+      } catch (err) {
+        console.error("Error while fetching UserDetails: ", err);
       }
     };
+
     fetchUserDetails();
   }, []);
 

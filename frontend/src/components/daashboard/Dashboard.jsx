@@ -27,23 +27,17 @@ function Dashboard() {
   const { globalSearch } = useSearch();
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
 
-      if (userId && token) {
-        try {
-          const response = await axios.get(`${server}/userProfile/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUserDetails(response.data);
-        } catch (err) {
-          console.error("Cannot fetch user details: ", err);
-        }
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(`${server}/userProfile/${userId}`);
+        setUserDetails(response.data);
+      } catch (err) {
+        console.error("Error while fetching UserDetails: ", err);
       }
     };
+
     fetchUserDetails();
   }, []);
 
