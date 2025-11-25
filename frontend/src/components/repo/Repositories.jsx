@@ -29,40 +29,37 @@ const user = {
   following: 1,
 };
 
-// SAMPLE REPOSITORIES
-const repos = [
-  {
-    name: "github-Clone",
-    public: true,
-    description: "Creating Github Clone",
-    language: "JavaScript",
-    updated: "17 minutes ago",
-  },
-  {
-    name: "Zerodha-Clone",
-    public: true,
-    description: "Creating Zerodha Clone",
-    language: "JavaScript",
-    updated: "20 hours ago",
-  },
-  {
-    name: "Mdirfan0786",
-    public: true,
-    description: "Config files for my GitHub profile.",
-    tags: ["config", "github-config"],
-    updated: "2 weeks ago",
-  },
-];
-
 function Repositories() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
+  const [menuRepo, setMenuRepo] = useState(null);
 
   const [userDetails, setUserDetails] = useState({
     username: "Md Irfan",
     email: "irfan@irfan.com",
   });
+  const [repositories, setRepositories] = useState([]);
+  const [searchRepositories, setSearchRepositories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [starredRepos, setStarredRepos] = useState([]);
+
+  const toggleStar = (repoId) => {
+    setStarredRepos((prev) =>
+      prev.includes(repoId)
+        ? prev.filter((id) => id !== repoId)
+        : [...prev, repoId]
+    );
+  };
+
+  const handleMenuOpen = (event, repoId) => {
+    setAnchorEl(event.currentTarget);
+    setMenuRepo(repoId); // jis repo ka menu open hua
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setMenuRepo(null);
+  };
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -76,8 +73,31 @@ function Repositories() {
       }
     };
 
+    const fetchRepositories = async () => {
+      try {
+        const response = await axios.get(`${server}/repo/all`);
+        setRepositories(response.data);
+      } catch (err) {
+        console.error("Error while fetching repositories! : ", err);
+      }
+    };
+
     fetchUserDetails();
+    fetchRepositories();
   }, []);
+
+  // Search Filter
+
+  useEffect(() => {
+    if (searchQuery === "") {
+      setSearchRepositories(repositories);
+    } else {
+      const filtered = repositories.filter((repo) => {
+        return repo.name.toLowerCase().includes(searchQuery.toLowerCase());
+      });
+      setSearchRepositories(filtered);
+    }
+  }, [searchQuery, repositories]);
 
   return (
     <>
@@ -159,6 +179,8 @@ function Repositories() {
                   "&:hover fieldset": { borderColor: "#666" },
                 },
               }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
 
             <Button
@@ -182,16 +204,18 @@ function Repositories() {
               Sort
             </Button>
 
-            <Button variant="contained" sx={{ bgcolor: "#238636" }}>
-              New
-            </Button>
+            <Link to={"/createRepo"}>
+              <Button variant="contained" sx={{ bgcolor: "#238636" }}>
+                New
+              </Button>
+            </Link>
           </Box>
 
           {/* Repo List */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {repos.map((repo, index) => (
+            {searchRepositories.map((repo) => (
               <Box
-                key={index}
+                key={repo._id}
                 sx={{
                   borderBottom: "1px solid #30363d",
                   pb: 2,
@@ -222,65 +246,13 @@ function Repositories() {
                           color: "#adbac7",
                         }}
                       >
-                        {repo.public ? "Public" : "Private"}
+                        {repo.visibility === true ? "Public" : "Private"}
                       </Box>
                     </Box>
 
                     <Typography sx={{ color: "#adbac7", mt: 0.5 }}>
                       {repo.description}
                     </Typography>
-
-                    {/* Language + Updated */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        mt: 1,
-                      }}
-                    >
-                      {repo.language && (
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <Box
-                            sx={{
-                              width: 12,
-                              height: 12,
-                              borderRadius: "50%",
-                              backgroundColor: "#f1e05a",
-                            }}
-                          ></Box>
-                          <Typography sx={{ color: "#adbac7", fontSize: 14 }}>
-                            {repo.language}
-                          </Typography>
-                        </Box>
-                      )}
-                      <Typography sx={{ color: "#768390", fontSize: 14 }}>
-                        Updated {repo.updated}
-                      </Typography>
-                    </Box>
-
-                    {/* Tags */}
-                    {repo.tags && (
-                      <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                        {repo.tags.map((tag, idx) => (
-                          <Box
-                            key={idx}
-                            sx={{
-                              bgcolor: "#13233a",
-                              color: "#58a6ff",
-                              px: 1.2,
-                              py: 0.3,
-                              borderRadius: "10px",
-                              fontSize: 12,
-                            }}
-                          >
-                            {tag}
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
                   </Box>
 
                   {/* Star + Menu */}
@@ -293,13 +265,20 @@ function Repositories() {
                         textTransform: "none",
                         mr: 1,
                       }}
-                      startIcon={<StarBorderIcon />}
+                      startIcon={
+                        starredRepos.includes(repo._id) ? (
+                          <StarBorderIcon style={{ fill: "yellow" }} />
+                        ) : (
+                          <StarBorderIcon />
+                        )
+                      }
+                      onClick={() => toggleStar(repo._id)}
                     >
-                      Star
+                      {starredRepos.includes(repo._id) ? "Starred" : "Star"}
                     </Button>
 
                     <IconButton
-                      onClick={handleMenuOpen}
+                      onClick={(e) => handleMenuOpen(e, repo._id)}
                       sx={{ color: "#adbac7" }}
                     >
                       <MoreVertIcon />
@@ -313,8 +292,23 @@ function Repositories() {
                         sx: { bgcolor: "#161b22", color: "#adbac7" },
                       }}
                     >
-                      <MenuItem onClick={handleMenuClose}>Unstar</MenuItem>
-                      <MenuItem onClick={handleMenuClose}>Copy link</MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          toggleStar(menuRepo); // ⭐ Unstar logic
+                          handleMenuClose();
+                        }}
+                      >
+                        {starredRepos.includes(menuRepo) ? "Unstar" : "Star"}
+                      </MenuItem>
+
+                      <MenuItem
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          handleMenuClose();
+                        }}
+                      >
+                        Copy link
+                      </MenuItem>
                     </Menu>
                   </Box>
                 </Box>
