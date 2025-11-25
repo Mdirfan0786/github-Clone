@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../navbar";
 import server from "../../environment";
+import { Link } from "react-router-dom";
 
 import {
   Box,
@@ -17,6 +18,8 @@ import {
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
+import gitpfp from "../../assets/git_pfp.jpg";
+
 // LEFT PANEL USER DATA (dummy for now)
 const user = {
   name: "MD IRFAN",
@@ -24,7 +27,6 @@ const user = {
   bio: "Full-Stack Developer in progress | Learning & building with MERN stack",
   followers: 0,
   following: 1,
-  avatar: "https://avatars.githubusercontent.com/u/00000000?v=4", // replace with your DP
 };
 
 // SAMPLE REPOSITORIES
@@ -83,7 +85,8 @@ function Repositories() {
       <Box
         sx={{
           display: "flex",
-          px: 4,
+          justifyContent: "center",
+          px: 15,
           py: 3,
           gap: 4,
           bgcolor: "#0d1117",
@@ -94,7 +97,7 @@ function Repositories() {
         {/* LEFT SIDE PROFILE */}
         <Box sx={{ width: "280px" }}>
           <Avatar
-            src={user.avatar}
+            src={gitpfp}
             sx={{ width: 230, height: 230, mx: "auto", mb: 2 }}
           />
 
@@ -117,6 +120,7 @@ function Repositories() {
               textTransform: "none",
               mb: 2,
             }}
+            onClick={(e) => alert("edit profile coming soon!")}
           >
             Edit profile
           </Button>
@@ -126,11 +130,18 @@ function Repositories() {
             <b style={{ color: "#c9d1d9" }}>{user.following}</b> following
           </Typography>
 
-          <Typography
-            sx={{ mt: 2, color: "#58a6ff", cursor: "pointer", fontSize: 14 }}
+          <a
+            href="https://www.linkedin.com/in/md-irfan-2623b4210?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none" }}
           >
-            https://www.linkedin.com/in/md-irfan
-          </Typography>
+            <Typography
+              sx={{ mt: 2, color: "#58a6ff", cursor: "pointer", fontSize: 14 }}
+            >
+              https://www.linkedin.com/in/md-irfan
+            </Typography>
+          </a>
         </Box>
 
         {/* RIGHT SIDE REPOSITORY SECTION */}
