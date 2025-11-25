@@ -58,6 +58,7 @@ export default function Navbar() {
   const getPageTitle = () => {
     if (location.pathname.includes("profile")) return "Profile";
     if (location.pathname.includes("createRepo")) return "New Repositories";
+    if (location.pathname.includes("allRepos")) return "Repositpries";
     if (location.pathname.includes("stars")) return "Stars";
     return "Dashboard";
   };
