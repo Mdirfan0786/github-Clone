@@ -54,13 +54,20 @@ function CreateRepo() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
 
-      try {
-        const response = await axios.get(`${server}/userProfile/${userId}`);
+      if (userId && token) {
+        try {
+          const response = await axios.get(`${server}/userProfile/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        setUserInfo(response.data);
-      } catch (err) {
-        console.error("cannot fetch user datails: ", err);
+          setUserInfo(response.data);
+        } catch (err) {
+          console.error("cannot fetch user datails: ", err);
+        }
       }
     };
 

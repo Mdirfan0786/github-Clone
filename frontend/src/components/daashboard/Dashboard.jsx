@@ -29,10 +29,15 @@ function Dashboard() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
 
-      if (userId) {
+      if (userId && token) {
         try {
-          const response = await axios.get(`${server}/userProfile/${userId}`);
+          const response = await axios.get(`${server}/userProfile/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           setUserDetails(response.data);
         } catch (err) {
           console.error("Cannot fetch user details: ", err);
