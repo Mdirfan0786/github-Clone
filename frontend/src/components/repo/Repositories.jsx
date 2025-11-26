@@ -53,7 +53,6 @@ function Repositories() {
         userId,
       });
 
-      // UI Update after DB success
       setStarredRepos((prev) =>
         prev.includes(repoId)
           ? prev.filter((id) => id !== repoId)
