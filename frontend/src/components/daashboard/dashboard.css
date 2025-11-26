@@ -1,44 +1,87 @@
+/* ============================= */
+/* DASHBOARD LAYOUT */
+/* ============================= */
+
 #dashboard {
   display: flex;
-  width: 100vw;
-  justify-content: space-between;
+  width: 100%;
   background-color: #010409;
   border-top: 1px solid #30363d;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
+
+/* ============================= */
+/* LEFT SIDEBAR */
+/* ============================= */
 
 #dashboard-left {
   background-color: #0d1117;
-  width: 20vw;
-  padding: 1rem 1rem 0 2rem;
+  width: 280px;
+  min-width: 280px;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border-right: 1px solid #30363d;
 }
 
-#search-left {
-  width: 100%;
-}
+/* ============================= */
+/* MAIN CONTENT */
+/* ============================= */
 
 #dashboard-main {
-  width: 60vw;
-  padding: 2.5rem 2.5rem 0;
+  flex: 1;
+  padding: 2.5rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
+
+/* ============================= */
+/* RIGHT SIDEBAR */
+/* ============================= */
+
+#dashboard-right {
+  width: 280px;
+  min-width: 280px;
+  padding: 2.5rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border-left: 1px solid #30363d;
+}
+
+/* ============================= */
+/* TOP REPOSITORY HEADER */
+/* ============================= */
 
 .topRepo {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+}
+
+.topRepo h5 {
+  color: #c9d1d9;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .topRepoIcon {
   display: flex;
   align-items: center;
-  gap: 1;
+  justify-content: center;
+  gap: 4px;
   height: 2rem;
   width: 3.5rem;
   border-radius: 8px;
   color: #fff;
   background-color: #29903b;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .topRepoIcon:hover {
+  background-color: #2ea043;
   color: #fff;
 }
 
@@ -49,6 +92,16 @@
 
 .topRepoIcon p {
   font-size: 0.8rem;
+  margin: 0;
+}
+
+/* ============================= */
+/* SEARCH LEFT */
+/* ============================= */
+
+#search-left {
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 .search-input {
@@ -57,9 +110,60 @@
   border-radius: 5px;
   border: 1px solid #30363d;
   background-color: #151b23;
+  color: #c9d1d9;
+  outline: none;
+  box-sizing: border-box;
 }
 
-#dashboard-right {
-  width: 20vw;
-  padding: 2.5rem 2.5rem 0 0;
+.search-input::placeholder {
+  color: #8b949e;
+}
+
+.search-input:focus {
+  border-color: #1f6feb;
+}
+
+/* ============================= */
+/* REPO LIST IN LEFT */
+/* ============================= */
+
+#dashboard-left h4 {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #c9d1d9;
+  margin: 0.5rem 0;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+#dashboard-left h4:hover {
+  color: #58a6ff;
+}
+
+/* ============================= */
+/* RESPONSIVE (MOBILE) */
+/* ============================= */
+
+@media (max-width: 1024px) {
+  #dashboard-right {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  #dashboard {
+    flex-direction: column;
+  }
+
+  #dashboard-left {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #30363d;
+  }
+
+  #dashboard-main {
+    width: 100%;
+    padding: 1.5rem;
+  }
 }
