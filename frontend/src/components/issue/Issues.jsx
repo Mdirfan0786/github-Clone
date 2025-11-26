@@ -10,6 +10,8 @@ import {
   DialogActions,
   List,
   ListItem,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../navbar";
@@ -46,9 +48,8 @@ function Issues() {
 
   const fetchRepos = async () => {
     try {
-      const res = await axios.get(`${server}/repo/${userId}`);
-      console.log(res.data);
-      setRepositories(res.data);
+      const res = await axios.get(`${server}/repo/user/${userId}`);
+      setRepositories(res.data.repositories);
     } catch (err) {
       console.error("Repo fetch error:", err.message);
     }
@@ -198,6 +199,7 @@ function Issues() {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        disableRestoreFocus
         maxWidth="xs"
         fullWidth
         PaperProps={{
@@ -217,20 +219,24 @@ function Issues() {
             {repositories.map((repo) => (
               <ListItem
                 key={repo._id}
-                button
-                onClick={() => handleRepoSelect(repo._id)}
+                disablePadding
                 sx={{
                   border: "1px solid #30363d",
                   borderRadius: 1,
                   mb: 1,
-                  cursor: "pointer",
                   backgroundColor: "#0d1117",
-                  "&:hover": {
-                    backgroundColor: "#161b22",
-                  },
                 }}
               >
-                {repo.name}
+                <ListItemButton
+                  onClick={() => handleRepoSelect(repo._id)}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#161b22",
+                    },
+                  }}
+                >
+                  <ListItemText primary={repo.name} />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>

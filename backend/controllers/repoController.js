@@ -61,11 +61,15 @@ async function fetchRepositoryById(req, res) {
   const { id } = req.params;
 
   try {
-    const repository = await Repository.find({ _id: id })
+    const repository = await Repository.findById(id)
       .populate("owner")
       .populate("issues");
 
-    res.send(repository);
+    if (!repository) {
+      return res.status(404).json({ message: "Repository not found!" });
+    }
+
+    res.status(200).json(repository);
   } catch (err) {
     console.error("Error while fetching repository : ", err.message);
     res.status(500).json({ message: "Server Error!" });

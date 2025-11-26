@@ -14,7 +14,6 @@ import server from "../../environment";
 function NewIssue() {
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log(id);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -32,7 +31,7 @@ function NewIssue() {
 
       const { data } = await axios.post(
         `${server}/issue/create`,
-        { title, description },
+        { title, description, repository: id },
         { withCredentials: true }
       );
 

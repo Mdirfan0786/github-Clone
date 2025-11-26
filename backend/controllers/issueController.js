@@ -4,14 +4,13 @@ const User = require("../models/userModel");
 const Issue = require("../models/issueModel");
 
 async function createIssue(req, res) {
-  const { title, description } = req.body;
-  const { id } = req.params;
+  const { title, description, repository } = req.body;
 
   try {
     const issue = new Issue({
       title,
       description,
-      repository: id,
+      repository,
     });
 
     await issue.save();
