@@ -62,7 +62,7 @@ const ProjectRoutes = () => {
       element: <Repositories />,
     },
     {
-      path: "/createRepo",
+      path: "/createRepo/:id",
       element: <CreateRepo />,
     },
     {
@@ -70,11 +70,27 @@ const ProjectRoutes = () => {
       element: <StarRepo />,
     },
     {
-      path: "/createIssue",
+      path: "/issue/:id",
       element: <NewIssue />,
     },
     {
-      path: "/allIssues",
+      path: "/issues",
+      element: <Issues />,
+    },
+    {
+      path: "/issues/assigned",
+      element: <Issues />,
+    },
+    {
+      path: "/issues/created",
+      element: <Issues />,
+    },
+    {
+      path: "/issues/mentioned",
+      element: <Issues />,
+    },
+    {
+      path: "/issues/recent",
       element: <Issues />,
     },
   ]);

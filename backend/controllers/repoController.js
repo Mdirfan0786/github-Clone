@@ -25,9 +25,19 @@ async function createRepository(req, res) {
     });
 
     const result = await newRepository.save();
-    res
-      .status(201)
-      .json({ message: "Repository Created!", repositoryID: result._id });
+
+    const user = await User.findById(owner);
+    if (!user) {
+      return res.status(404).json({ error: "Owner not found!" });
+    }
+
+    user.repositories.push(result._id);
+    await user.save();
+
+    res.status(201).json({
+      message: "Repository Created!",
+      repositoryID: result._id,
+    });
   } catch (err) {
     console.error("Error while Repository creation : ", err.message);
     res.status(500).json({ message: "Server Error!" });
@@ -157,6 +167,10 @@ async function deleteRepositoryById(req, res) {
     if (!repository) {
       return res.status(404).json({ message: "Repository not found!" });
     }
+
+    await User.findByIdAndUpdate(repository.owner, {
+      $pull: { repositories: repository._id },
+    });
 
     res.json({ message: "Repository deleted Successfully!" });
   } catch (err) {

@@ -57,7 +57,7 @@ function CreateRepo() {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(`${server}/userProfile/${userId}`);
-        setUserDetails(response.data);
+        setUserInfo(response.data);
       } catch (err) {
         console.error("Error while fetching UserDetails: ", err);
       }

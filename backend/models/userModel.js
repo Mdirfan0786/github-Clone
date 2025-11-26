@@ -19,27 +19,23 @@ const UserSchema = new Schema(
       type: String,
     },
 
-    repositories: [
-      {
-        default: [],
-        type: Schema.Types.ObjectId,
-        ref: "Repository",
-      },
-    ],
-    followedUsers: [
-      {
-        default: [],
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    starRepos: [
-      {
-        default: [],
-        type: Schema.Types.ObjectId,
-        ref: "Repository",
-      },
-    ],
+    repositories: {
+      type: [Schema.Types.ObjectId],
+      ref: "Repository",
+      default: [],
+    },
+
+    followedUsers: {
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+
+    starRepos: {
+      type: [Schema.Types.ObjectId],
+      ref: "Repository",
+      default: [],
+    },
   },
   {
     timestamps: true,

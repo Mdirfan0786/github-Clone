@@ -40,6 +40,7 @@ import { useSearch } from "../SearchContext";
 import gitpfp from "../assets/git_pfp.jpg";
 
 export default function Navbar() {
+  const userId = localStorage.getItem("userId");
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [anchorAdd, setAnchorAdd] = useState(null);
@@ -59,7 +60,7 @@ export default function Navbar() {
     if (location.pathname.includes("profile")) return "Profile";
     if (location.pathname.includes("createRepo")) return "New Repositories";
     if (location.pathname.includes("allRepos")) return "Repositpries";
-    if (location.pathname.includes("stars")) return "Stars";
+    if (location.pathname.includes("starRepo")) return "Stars";
     return "Dashboard";
   };
 
@@ -187,7 +188,7 @@ export default function Navbar() {
             >
               <MenuItem
                 component={Link}
-                to="/createRepo"
+                to={`/createRepo/${userId}`}
                 onClick={() => setAnchorAdd(null)}
                 sx={{
                   "&:hover": {
@@ -469,7 +470,7 @@ export default function Navbar() {
           <ListItem disablePadding>
             <ListItemButton
               component={Link}
-              to={"/allIssues"}
+              to={"/issues"}
               sx={{
                 borderRadius: 2,
                 "&:hover": {
