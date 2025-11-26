@@ -35,7 +35,6 @@ function NewIssue() {
         { withCredentials: true }
       );
 
-      console.log("Issue created:", data);
       navigate("/issues/assigned");
     } catch (err) {
       console.error("Create issue error:", err.response?.data || err.message);

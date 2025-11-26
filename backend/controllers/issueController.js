@@ -14,6 +14,21 @@ async function createIssue(req, res) {
     });
 
     await issue.save();
+
+    const repo = await Repository.findById(repository);
+
+    if (!repo) {
+      return res.status(404).json({ message: "repository not found!" });
+    }
+
+    console.log("before: ", repo.issues);
+
+    repo.issues.push(issue._id);
+
+    await repo.save();
+
+    console.log("after saved: ", repo.issues);
+
     res.status(201).json(issue);
   } catch (err) {
     console.error("Error while issue creation : ", err.message);
