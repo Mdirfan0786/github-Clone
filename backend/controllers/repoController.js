@@ -105,8 +105,13 @@ async function updateRepositoryById(req, res) {
       return res.status(404).json({ error: "Repository not found!" });
     }
 
-    repository.content.push = content;
-    repository.description = description;
+    if (content) {
+      repository.content.push(content);
+    }
+
+    if (description) {
+      repository.description = description;
+    }
 
     const updatedRepo = await repository.save();
 
@@ -160,6 +165,62 @@ async function deleteRepositoryById(req, res) {
   }
 }
 
+// starred repository
+
+async function toggleStarRepo(req, res) {
+  const { repoId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "user not found!" });
+    }
+
+    const repo = await Repository.findOne({ _id: repoId });
+
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found!" });
+    }
+
+    const isStarred = user.starRepos.includes(repoId);
+
+    if (isStarred) {
+      user.starRepos = user.starRepos.filter((id) => id.toString() !== repoId);
+    } else {
+      user.starRepos.push(repoId);
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      starred: !isStarred,
+    });
+  } catch (err) {
+    console.error("Error while toggling starRepo : ", err.message);
+    res.status(500).json({ message: "Server Error!" });
+  }
+}
+
+async function getStarredRepositories(req, res) {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId).populate("starRepos");
+
+    if (!user) {
+      return res.status(404).json({ message: "user not found!" });
+    }
+
+    res.status(200).json(user.starRepos);
+  } catch (err) {
+    console.error("Error while getting Starred Repositories! : ", err.message);
+    res.status(500).json({ message: "Server Error!" });
+  }
+}
+
 module.exports = {
   createRepository,
   getAllRepositories,
@@ -169,4 +230,6 @@ module.exports = {
   updateRepositoryById,
   toggleVisibilityById,
   deleteRepositoryById,
+  toggleStarRepo,
+  getStarredRepositories,
 };

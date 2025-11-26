@@ -15,4 +15,9 @@ repoRouter.put("/repo/update/:id", repoController.updateRepositoryById);
 repoRouter.patch("/repo/toggle/:id", repoController.toggleVisibilityById);
 repoRouter.delete("/repo/delete/:id", repoController.deleteRepositoryById);
 
+// starred routes
+
+repoRouter.post("/repo/star/:repoId", repoController.toggleStarRepo);
+repoRouter.get("/repo/starred/:userId", repoController.getStarredRepositories);
+
 module.exports = repoRouter;

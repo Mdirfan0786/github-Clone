@@ -83,7 +83,6 @@ function CreateRepo() {
       visibility: visibility,
       issues: [],
     };
-    console.log(repoData);
     try {
       const response = await axios.post(`${server}/repo/create`, repoData);
 

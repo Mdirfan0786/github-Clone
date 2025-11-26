@@ -43,13 +43,42 @@ function Repositories() {
 
   const [starredRepos, setStarredRepos] = useState([]);
 
-  const toggleStar = (repoId) => {
-    setStarredRepos((prev) =>
-      prev.includes(repoId)
-        ? prev.filter((id) => id !== repoId)
-        : [...prev, repoId]
-    );
+  const toggleStar = async (repoId) => {
+    console.log("repoId going to backend:", repoId);
+    try {
+      const userId = localStorage.getItem("userId");
+      console.log("userId:", userId);
+
+      await axios.post(`${server}/repo/star/${repoId}`, {
+        userId,
+      });
+
+      // UI Update after DB success
+      setStarredRepos((prev) =>
+        prev.includes(repoId)
+          ? prev.filter((id) => id !== repoId)
+          : [...prev, repoId]
+      );
+    } catch (err) {
+      console.error("Star toggle failed:", err);
+    }
   };
+
+  useEffect(() => {
+    const fetchStarred = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        const res = await axios.get(`${server}/repo/starred/${userId}`);
+
+        const starredIds = res.data.map((repo) => repo._id);
+        setStarredRepos(starredIds);
+      } catch (err) {
+        console.error("Error fetching starred repos", err);
+      }
+    };
+
+    fetchStarred();
+  }, []);
 
   const handleMenuOpen = (event, repoId) => {
     setAnchorEl(event.currentTarget);
