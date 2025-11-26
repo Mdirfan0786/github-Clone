@@ -81,7 +81,17 @@ function startServer() {
     .then(() => console.log("MongoDB Connected!"))
     .catch((err) => console.error("unable to connect db : ", err));
 
-  app.use(cors({ origin: "*" }));
+  app.use(
+    cors({
+      origin: [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        process.env.FRONTEND_URL,
+      ],
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    })
+  );
 
   app.use("/", mainRouter);
 
