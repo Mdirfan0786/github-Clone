@@ -203,7 +203,7 @@ export default function Navbar() {
 
               <MenuItem
                 component={Link}
-                to="/createIssue"
+                to="/issues"
                 onClick={() => setAnchorAdd(null)}
                 sx={{
                   "&:hover": {
@@ -213,7 +213,7 @@ export default function Navbar() {
                   },
                 }}
               >
-                New Issue
+                Issues
               </MenuItem>
             </Menu>
 

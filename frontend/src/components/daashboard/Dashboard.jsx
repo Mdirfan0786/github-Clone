@@ -100,7 +100,7 @@ function Dashboard() {
         <aside id="dashboard-left" sx={{ border: " 1px solid #30363d" }}>
           <div className="topRepo">
             <h5>Top Repositories</h5>
-            <Link to={"/createRepo"} className="topRepoIcon">
+            <Link to={"/createRepo/:id"} className="topRepoIcon">
               <AddIcon className="icon" />
               <p>New</p>
             </Link>
