@@ -33,7 +33,7 @@ async function createIssue(req, res) {
 }
 
 async function updateIssueById(req, res) {
-  const { title, description, status } = req.body;
+  const { status } = req.body;
   const { id } = req.params;
 
   try {
@@ -43,8 +43,8 @@ async function updateIssueById(req, res) {
       return res.status(404).json({ error: "issue not found!" });
     }
 
-    issue.title = title;
-    issue.description = description;
+    // issue.title = title;
+    // issue.description = description;
     issue.status = status;
 
     await issue.save();

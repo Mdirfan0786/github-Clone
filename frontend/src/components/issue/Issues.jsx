@@ -50,7 +50,6 @@ function Issues() {
   const fetchRepos = async () => {
     try {
       const res = await axios.get(`${server}/repo/user/${userId}`);
-      console.log(res.data.repositories);
       setRepositories(res.data.repositories);
     } catch (err) {
       console.error("Repo fetch error:", err.message);
@@ -69,8 +68,7 @@ function Issues() {
 
     const fetchIssues = async () => {
       try {
-        const response = await axios.get(`${server}/issue/${repoId}`);
-        console.log(response.data);
+        const response = await axios.get(`${server}/issue/all/${repoId}`);
         setIssues(response.data);
       } catch (err) {
         console.error("Error while fetching issues : ", err);
@@ -89,6 +87,25 @@ function Issues() {
   const handleRepoSelect = (repoId) => {
     setOpen(false);
     navigate(`/issue/${repoId}`);
+  };
+
+  // toggle open/close issues
+  const toggleIssueStatus = async (issueId, currentStatus) => {
+    const newStatus = currentStatus === "open" ? "closed" : "open";
+
+    try {
+      await axios.put(`${server}/issue/update/${issueId}`, {
+        status: newStatus,
+      });
+
+      setIssues((prev) =>
+        prev.map((issue) =>
+          issue._id === issueId ? { ...issue, status: newStatus } : issue
+        )
+      );
+    } catch (err) {
+      console.error("Error while updating issue:", err);
+    }
   };
 
   return (
@@ -183,9 +200,10 @@ function Issues() {
             sx={{
               border: "1px solid #30363d",
               borderRadius: 2,
-              minHeight: 300,
+              overflow: "hidden",
             }}
           >
+            {/* Header */}
             <Box
               sx={{
                 minHeight: 50,
@@ -194,28 +212,81 @@ function Issues() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                fontWeight: 600,
               }}
             >
-              <Typography>results</Typography>
+              <Typography>Results</Typography>
               <Typography>Updated</Typography>
             </Box>
 
-            <Box
-              sx={{
-                borderTop: "1px solid #30363d",
-                minHeight: 250,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Box textAlign="center">
-                <Typography variant="h6">No results</Typography>
-                <Typography variant="body2" sx={{ opacity: 0.6 }}>
-                  Try adjusting your search filters.
-                </Typography>
+            {/* Issues List */}
+            {issues.length === 0 ? (
+              <Box
+                sx={{
+                  minHeight: 250,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderTop: "1px solid #30363d",
+                }}
+              >
+                <Box textAlign="center">
+                  <Typography variant="h6">No results</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.6 }}>
+                    Try adjusting your search filters.
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
+            ) : (
+              issues.map((issue) => (
+                <Box
+                  key={issue._id}
+                  sx={{
+                    borderTop: "1px solid #30363d",
+                    px: 2,
+                    py: 1.5,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    "&:hover": {
+                      backgroundColor: "#161B22",
+                    },
+                  }}
+                >
+                  {/* Left Side */}
+                  <Box>
+                    <Typography sx={{ fontWeight: 600 }}>
+                      {issue.title} / {issue.repository}
+                    </Typography>
+
+                    <Typography variant="body2" sx={{ opacity: 0.7, mt: 0.4 }}>
+                      {issue.description}
+                    </Typography>
+
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        mt: 0.5,
+                        display: "inline-block",
+                        color: issue.status === "open" ? "#2ea043" : "#f85149",
+                      }}
+                    >
+                      ● {issue.status.toUpperCase()}
+                    </Typography>
+                  </Box>
+
+                  {/* Right Side Button */}
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color={issue.status === "open" ? "success" : "error"}
+                    onClick={() => toggleIssueStatus(issue._id, issue.status)}
+                  >
+                    {issue.status === "open" ? "Close" : "Reopen"}
+                  </Button>
+                </Box>
+              ))
+            )}
           </Box>
         </Box>
       </Box>
