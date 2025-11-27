@@ -7,6 +7,6 @@ issueRouter.post("/issue/create", issueController.createIssue);
 issueRouter.put("/issue/update/:id", issueController.updateIssueById);
 issueRouter.delete("/issue/delete/:id", issueController.deleteIssueById);
 issueRouter.get("/issue/all", issueController.getAllIssues);
-issueRouter.put("/issue/:id", issueController.getIssueById);
+issueRouter.get("/issue/:id", issueController.getIssueById);
 
 module.exports = issueRouter;

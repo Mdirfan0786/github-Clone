@@ -25,6 +25,7 @@ function Issues() {
 
   const [open, setOpen] = useState(false);
   const [repositories, setRepositories] = useState([]);
+  const [issues, setIssues] = useState([]);
 
   const sidebarItems = [
     { label: "Assigned to me", route: "/issues/assigned" },
@@ -49,11 +50,35 @@ function Issues() {
   const fetchRepos = async () => {
     try {
       const res = await axios.get(`${server}/repo/user/${userId}`);
+      console.log(res.data.repositories);
       setRepositories(res.data.repositories);
     } catch (err) {
       console.error("Repo fetch error:", err.message);
     }
   };
+
+  // fetching Issues
+
+  useEffect(() => {
+    if (repositories.length === 0) {
+      fetchRepos();
+      return;
+    }
+
+    const repoId = repositories[0]._id;
+
+    const fetchIssues = async () => {
+      try {
+        const response = await axios.get(`${server}/issue/${repoId}`);
+        console.log(response.data);
+        setIssues(response.data);
+      } catch (err) {
+        console.error("Error while fetching issues : ", err);
+      }
+    };
+
+    fetchIssues();
+  }, [repositories]);
 
   // Dynamic header title
   const currentTitle =

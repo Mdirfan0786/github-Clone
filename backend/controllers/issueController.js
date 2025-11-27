@@ -21,13 +21,9 @@ async function createIssue(req, res) {
       return res.status(404).json({ message: "repository not found!" });
     }
 
-    console.log("before: ", repo.issues);
-
     repo.issues.push(issue._id);
 
     await repo.save();
-
-    console.log("after saved: ", repo.issues);
 
     res.status(201).json(issue);
   } catch (err) {
