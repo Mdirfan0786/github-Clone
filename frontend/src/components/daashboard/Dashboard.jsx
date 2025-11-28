@@ -100,7 +100,7 @@ function Dashboard() {
         <aside id="dashboard-left" sx={{ border: " 1px solid #30363d" }}>
           <div className="topRepo">
             <h5>Top Repositories</h5>
-            <Link to={"/createRepo/:id"} className="topRepoIcon">
+            <Link to={`/createRepo/${userDetails._id}`} className="topRepoIcon">
               <AddIcon className="icon" />
               <p>New</p>
             </Link>
@@ -118,23 +118,25 @@ function Dashboard() {
 
           {searchResults.map((repo) => (
             <div key={repo._id}>
-              <h4
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src={gitpfp}
-                  alt="GitHub Logo"
+              <Link to={`/repo/${userDetails.username}/${repo.name}`}>
+                <h4
                   style={{
-                    width: 20,
-                    marginRight: "0.5rem",
-                    borderRadius: "1.25rem",
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                />
-                {userDetails.username}/{repo.name}
-              </h4>
+                >
+                  <img
+                    src={gitpfp}
+                    alt="GitHub Logo"
+                    style={{
+                      width: 20,
+                      marginRight: "0.5rem",
+                      borderRadius: "1.25rem",
+                    }}
+                  />
+                  {userDetails.username}/{repo.name}
+                </h4>
+              </Link>
             </div>
           ))}
         </aside>
@@ -163,8 +165,11 @@ function Dashboard() {
                   {repo.description}
                 </Typography>
               </CardContent>
+
               <CardActions>
-                <Button size="small">View Repository</Button>
+                <Link to={`/repo/${userDetails.username}/${repo.name}`}>
+                  <Button size="small">View Repository</Button>
+                </Link>
               </CardActions>
             </Card>
           ))}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import server from "../../environment";
 import Navbar from "../navbar";
+import Footer from "../../footer";
 
 import {
   Box,
@@ -231,6 +232,7 @@ function Stars() {
           )}
         </Box>
       </Box>
+      <Footer />
     </>
   );
 }

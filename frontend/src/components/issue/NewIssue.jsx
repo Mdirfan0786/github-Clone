@@ -9,6 +9,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../navbar";
+import Footer from "../../footer";
 import server from "../../environment";
 
 function NewIssue() {
@@ -158,6 +159,8 @@ function NewIssue() {
           </Box>
         </Box>
       </Box>
+
+      <Footer />
     </>
   );
 }

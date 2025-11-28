@@ -12,6 +12,7 @@ import StarRepo from "./components/repo/starRepo";
 import NewIssue from "./components/issue/NewIssue";
 import Issues from "./components/issue/Issues";
 import Repositories from "./components/repo/Repositories";
+import ViewRepo from "./components/repo/viewRepo";
 
 // Auth Context
 
@@ -64,6 +65,10 @@ const ProjectRoutes = () => {
     {
       path: "/createRepo/:id",
       element: <CreateRepo />,
+    },
+    {
+      path: "/repo/:username/:name",
+      element: <ViewRepo />,
     },
     {
       path: "/:username/starRepo",

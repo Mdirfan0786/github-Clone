@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../navbar";
+import Footer from "../../footer";
 import server from "../../environment";
 import { Link } from "react-router-dom";
 
@@ -232,7 +233,7 @@ function Repositories() {
               Sort
             </Button>
 
-            <Link to={"/createRepo"}>
+            <Link to={"/createRepo/:id"}>
               <Button variant="contained" sx={{ bgcolor: "#238636" }}>
                 New
               </Button>
@@ -345,6 +346,7 @@ function Repositories() {
           </Box>
         </Box>
       </Box>
+      <Footer />
     </>
   );
 }

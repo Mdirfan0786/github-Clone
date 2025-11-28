@@ -13,19 +13,27 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Navbar from "../navbar";
+import Footer from "../../footer";
 import axios from "axios";
 import server from "../../environment";
 
 function Issues() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { repoId: routeRepoId } = useParams();
+
   const userId = localStorage.getItem("userId");
 
   const [open, setOpen] = useState(false);
+  const [newIssueOpen, setNewIssueOpen] = useState(false);
   const [repositories, setRepositories] = useState([]);
+  const [activeRepoId, setActiveRepoId] = useState(null);
+
   const [issues, setIssues] = useState([]);
+  const [searchIssue, setSearchIssue] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   const sidebarItems = [
     { label: "Assigned to me", route: "/issues/assigned" },
@@ -34,62 +42,54 @@ function Issues() {
     { label: "Recent activity", route: "/issues/recent" },
   ];
 
+  // Redirect /issues to --> /issues/assigned
   useEffect(() => {
     if (location.pathname === "/issues") {
       navigate("/issues/assigned", { replace: true });
     }
   }, [location.pathname, navigate]);
 
-  //  Fetch repositories when modal opens
   useEffect(() => {
-    if (open) {
-      fetchRepos();
-    }
-  }, [open]);
+    fetchRepos();
+  }, []);
 
   const fetchRepos = async () => {
     try {
       const res = await axios.get(`${server}/repo/user/${userId}`);
-      setRepositories(res.data.repositories);
+      setRepositories(res.data.repositories || []);
+      if (res.data.repositories?.length > 0) {
+        setActiveRepoId(res.data.repositories[0]._id);
+      }
     } catch (err) {
       console.error("Repo fetch error:", err.message);
     }
   };
 
-  // fetching Issues
-
+  // Fetch issues when active repo changes
   useEffect(() => {
-    if (repositories.length === 0) {
-      fetchRepos();
-      return;
-    }
-
-    const repoId = repositories[0]._id;
+    if (!activeRepoId) return;
 
     const fetchIssues = async () => {
       try {
-        const response = await axios.get(`${server}/issue/all/${repoId}`);
-        setIssues(response.data);
+        const response = await axios.get(`${server}/issue/all/${activeRepoId}`);
+        setIssues(response.data || []);
+        setSearchResults(response.data || []);
       } catch (err) {
-        console.error("Error while fetching issues : ", err);
+        console.error("Error while fetching issues:", err);
       }
     };
 
     fetchIssues();
-  }, [repositories]);
+  }, [activeRepoId]);
 
-  // Dynamic header title
-  const currentTitle =
-    sidebarItems.find((item) => location.pathname === item.route)?.label ||
-    "Issues";
-
-  // Repo select handler
+  // Repo select
   const handleRepoSelect = (repoId) => {
+    setActiveRepoId(repoId);
     setOpen(false);
     navigate(`/issue/${repoId}`);
   };
 
-  // toggle open/close issues
+  // ========= Toggle open/close issue
   const toggleIssueStatus = async (issueId, currentStatus) => {
     const newStatus = currentStatus === "open" ? "closed" : "open";
 
@@ -103,10 +103,35 @@ function Issues() {
           issue._id === issueId ? { ...issue, status: newStatus } : issue
         )
       );
+
+      setSearchResults((prev) =>
+        prev.map((issue) =>
+          issue._id === issueId ? { ...issue, status: newStatus } : issue
+        )
+      );
     } catch (err) {
       console.error("Error while updating issue:", err);
     }
   };
+
+  // ======== Search Filter
+
+  useEffect(() => {
+    if (searchIssue.trim() === "") {
+      setSearchResults(issues);
+    } else {
+      const filtered = issues.filter(
+        (issue) =>
+          issue.title.toLowerCase().includes(searchIssue.toLowerCase()) ||
+          issue.description.toLowerCase().includes(searchIssue.toLowerCase())
+      );
+      setSearchResults(filtered);
+    }
+  }, [searchIssue, issues]);
+
+  const currentTitle =
+    sidebarItems.find((item) => location.pathname === item.route)?.label ||
+    "Issues";
 
   return (
     <>
@@ -115,19 +140,13 @@ function Issues() {
       <Box
         sx={{
           display: "flex",
-          height: "100vh",
+          minHeight: "100vh",
           backgroundColor: "#0d1117",
           color: "#c9d1d9",
         }}
       >
         {/* LEFT SIDEBAR */}
-        <Box
-          sx={{
-            width: 260,
-            borderRight: "1px solid #30363d",
-            p: 2,
-          }}
-        >
+        <Box sx={{ width: 260, borderRight: "1px solid #30363d", p: 2 }}>
           {sidebarItems.map((item) => (
             <Typography
               key={item.route}
@@ -152,58 +171,56 @@ function Issues() {
 
         {/* MAIN CONTENT */}
         <Box sx={{ flex: 1, p: 3 }}>
-          {/* Dynamic Header */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              mb: 2,
-            }}
-          >
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
             <Typography variant="h5" fontWeight="bold">
               {currentTitle}
             </Typography>
 
-            {/* ✅ FIXED BUTTON */}
-            <Button
-              variant="contained"
-              onClick={() => setOpen(true)}
-              sx={{
-                backgroundColor: "#238636",
-                textTransform: "none",
-                "&:hover": { backgroundColor: "#2ea043" },
-              }}
-            >
-              New issue
-            </Button>
+            <Box>
+              <Button
+                variant="contained"
+                onClick={() => setOpen(true)}
+                sx={{
+                  backgroundColor: "#238636",
+                  marginRight: 2,
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "#2ea043" },
+                }}
+              >
+                Change Repo
+              </Button>
+
+              <Button
+                variant="contained"
+                onClick={() => setNewIssueOpen(true)}
+                sx={{
+                  backgroundColor: "#238636",
+                  textTransform: "none",
+                  "&:hover": { backgroundColor: "#2ea043" },
+                }}
+              >
+                New issue
+              </Button>
+            </Box>
           </Box>
 
           {/* SEARCH BAR */}
           <TextField
             fullWidth
-            variant="outlined"
             size="small"
-            placeholder="is:issue state:open archived:false assignee:@me sort:updated-desc"
-            InputProps={{
-              sx: { color: "#c9d1d9", borderRadius: 2 },
-            }}
+            value={searchIssue}
+            placeholder="Search issues..."
             sx={{
               mb: 3,
               border: "1px solid #30363d",
               borderRadius: 2,
               input: { color: "#c9d1d9" },
             }}
+            onChange={(e) => setSearchIssue(e.target.value)}
           />
 
           {/* RESULTS */}
-          <Box
-            sx={{
-              border: "1px solid #30363d",
-              borderRadius: 2,
-              overflow: "hidden",
-            }}
-          >
-            {/* Header */}
+          <Box sx={{ border: "1px solid #30363d", borderRadius: 2 }}>
             <Box
               sx={{
                 minHeight: 50,
@@ -219,26 +236,19 @@ function Issues() {
               <Typography>Updated</Typography>
             </Box>
 
-            {/* Issues List */}
-            {issues.length === 0 ? (
+            {searchResults.length === 0 ? (
               <Box
                 sx={{
                   minHeight: 250,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  borderTop: "1px solid #30363d",
                 }}
               >
-                <Box textAlign="center">
-                  <Typography variant="h6">No results</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.6 }}>
-                    Try adjusting your search filters.
-                  </Typography>
-                </Box>
+                <Typography>No Issues Found</Typography>
               </Box>
             ) : (
-              issues.map((issue) => (
+              searchResults.map((issue) => (
                 <Box
                   key={issue._id}
                   sx={{
@@ -247,27 +257,19 @@ function Issues() {
                     py: 1.5,
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
-                    "&:hover": {
-                      backgroundColor: "#161B22",
-                    },
+                    "&:hover": { backgroundColor: "#161B22" },
                   }}
                 >
-                  {/* Left Side */}
                   <Box>
                     <Typography sx={{ fontWeight: 600 }}>
-                      {issue.title} / {issue.repository}
+                      {issue.title}
                     </Typography>
-
-                    <Typography variant="body2" sx={{ opacity: 0.7, mt: 0.4 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.7 }}>
                       {issue.description}
                     </Typography>
-
                     <Typography
                       variant="caption"
                       sx={{
-                        mt: 0.5,
-                        display: "inline-block",
                         color: issue.status === "open" ? "#2ea043" : "#f85149",
                       }}
                     >
@@ -275,12 +277,12 @@ function Issues() {
                     </Typography>
                   </Box>
 
-                  {/* Right Side Button */}
                   <Button
-                    size="small"
+                    size="large"
                     variant="outlined"
                     color={issue.status === "open" ? "success" : "error"}
                     onClick={() => toggleIssueStatus(issue._id, issue.status)}
+                    sx={{ maxHeight: 40 }}
                   >
                     {issue.status === "open" ? "Close" : "Reopen"}
                   </Button>
@@ -291,7 +293,7 @@ function Issues() {
         </Box>
       </Box>
 
-      {/*  REPOSITORY SELECT MODAL */}
+      {/* REPO MODAL */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -344,6 +346,60 @@ function Issues() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={newIssueOpen}
+        onClose={() => setNewIssueOpen(false)}
+        disableRestoreFocus
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            backgroundColor: "#010409",
+            color: "#c9d1d9",
+            border: "1px solid #30363d",
+          },
+        }}
+      >
+        <DialogTitle sx={{ borderBottom: "1px solid #30363d" }}>
+          Select Repository
+        </DialogTitle>
+
+        <DialogContent sx={{ mt: 1 }}>
+          <List>
+            {repositories.map((repo) => (
+              <ListItem
+                key={repo._id}
+                disablePadding
+                sx={{
+                  border: "1px solid #30363d",
+                  borderRadius: 1,
+                  mb: 1,
+                  backgroundColor: "#0d1117",
+                }}
+              >
+                <ListItemButton
+                  onClick={() => handleRepoSelect(repo._id)}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#161b22",
+                    },
+                  }}
+                >
+                  <ListItemText primary={repo.name} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+
+        <DialogActions sx={{ borderTop: "1px solid #30363d" }}>
+          <Button onClick={() => setOpen(false)} sx={{ color: "#c9d1d9" }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Footer />
     </>
   );
 }
