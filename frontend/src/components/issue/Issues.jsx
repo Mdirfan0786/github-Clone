@@ -86,6 +86,10 @@ function Issues() {
   const handleRepoSelect = (repoId) => {
     setActiveRepoId(repoId);
     setOpen(false);
+  };
+
+  const handleRepoSelectforCreateIssue = (repoId) => {
+    setIssues(false);
     navigate(`/issue/${repoId}`);
   };
 
@@ -378,7 +382,7 @@ function Issues() {
                 }}
               >
                 <ListItemButton
-                  onClick={() => handleRepoSelect(repo._id)}
+                  onClick={() => handleRepoSelectforCreateIssue(repo._id)}
                   sx={{
                     "&:hover": {
                       backgroundColor: "#161b22",
