@@ -4,40 +4,80 @@ import {
   Typography,
   Button,
   Avatar,
-  Divider,
   Chip,
   IconButton,
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useParams } from "react-router-dom";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../navbar";
 import Footer from "../../footer";
 import server from "../../environment";
 
 function ViewRepo() {
-  const { repoId } = useParams();
+  const { name } = useParams();
 
   const [repo, setRepo] = useState(null);
   const [files, setFiles] = useState([]);
 
-  useEffect(() => {
-    fetchRepo();
-  }, []);
+  // Fetching starred repository and togglinh star/unstar
+  const [starredRepos, setStarredRepos] = useState([]);
 
-  const fetchRepo = async () => {
+  const toggleStar = async (repoId) => {
     try {
-      const res = await axios.get(`${server}/repo/${repoId}`);
-      setRepo(res.data.repository);
-      setFiles(res.data.files || []);
+      const userId = localStorage.getItem("userId");
+
+      await axios.post(`${server}/repo/star/${repoId}`, {
+        userId,
+      });
+
+      setStarredRepos((prev) =>
+        prev.includes(repoId)
+          ? prev.filter((id) => id !== repoId)
+          : [...prev, repoId]
+      );
     } catch (err) {
-      console.error("Repo fetch error:", err);
+      console.error("Star toggle failed:", err);
     }
   };
 
+  useEffect(() => {
+    const fetchStarred = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+
+        const res = await axios.get(`${server}/repo/starred/${userId}`);
+
+        const starredIds = res.data.map((repo) => repo._id);
+        setStarredRepos(starredIds);
+      } catch (err) {
+        console.error("failed to fetch starred repos! : ", err);
+      }
+    };
+
+    fetchStarred();
+  }, []);
+
+  useEffect(() => {
+    const fetchRepo = async () => {
+      try {
+        const res = await axios.get(`${server}/repo/name/${name}`);
+        const repository = res.data[0];
+
+        setRepo(repository);
+        setFiles(repository.content || []);
+      } catch (err) {
+        console.error("Repo fetch error:", err);
+      }
+    };
+
+    fetchRepo();
+  }, [name]);
+
   const copyCloneUrl = () => {
     navigator.clipboard.writeText(
-      `${server}/${repo?.owner?.username}/${repo?.name}`
+      `${server}/${repo.owner.username}/${repo.name}`
     );
   };
 
@@ -58,14 +98,14 @@ function ViewRepo() {
           <Box sx={{ mb: 3 }}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <Avatar sx={{ mr: 1, bgcolor: "#238636" }}>
-                {repo.owner?.username[0].toUpperCase()}
+                {repo.owner.username[0].toUpperCase()}
               </Avatar>
 
               <Typography
                 variant="h5"
                 sx={{ fontWeight: 600, color: "#58a6ff" }}
               >
-                {repo.owner?.username} / {repo.name}
+                {repo.owner.username} / {repo.name}
               </Typography>
 
               <Chip
@@ -98,8 +138,19 @@ function ViewRepo() {
           }}
         >
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Button variant="outlined" size="small">
-              ⭐ Star
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={
+                starredRepos.includes(repo?.owner?._id) ? (
+                  <StarBorderIcon style={{ fill: "yellow" }} />
+                ) : (
+                  <StarBorderIcon />
+                )
+              }
+              onClick={() => toggleStar(repo?.owner?._id)}
+            >
+              {starredRepos.includes(repo?.owner?._id) ? "Starred" : "Star"}
             </Button>
             <Button variant="outlined" size="small">
               🍴 Fork

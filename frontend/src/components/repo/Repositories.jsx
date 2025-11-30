@@ -45,10 +45,8 @@ function Repositories() {
   const [starredRepos, setStarredRepos] = useState([]);
 
   const toggleStar = async (repoId) => {
-    console.log("repoId going to backend:", repoId);
     try {
       const userId = localStorage.getItem("userId");
-      console.log("userId:", userId);
 
       await axios.post(`${server}/repo/star/${repoId}`, {
         userId,
@@ -323,7 +321,7 @@ function Repositories() {
                     >
                       <MenuItem
                         onClick={() => {
-                          toggleStar(menuRepo); // ⭐ Unstar logic
+                          toggleStar(menuRepo);
                           handleMenuClose();
                         }}
                       >

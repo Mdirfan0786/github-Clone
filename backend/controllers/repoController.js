@@ -78,6 +78,7 @@ async function fetchRepositoryById(req, res) {
 
 async function fetchRepositoryByName(req, res) {
   const { name } = req.params;
+  console.log(name);
 
   try {
     const repository = await Repository.find({ name })
