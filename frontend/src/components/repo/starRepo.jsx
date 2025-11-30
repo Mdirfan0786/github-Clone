@@ -172,63 +172,58 @@ function Stars() {
               No starred repositories yet
             </Typography>
           ) : (
-            filteredRepos.map(
-              (repo) => (
-                console.log(repo),
-                (
-                  <Card
-                    key={repo._id}
-                    sx={{
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderLeft: "none",
-                      borderRight: "none",
-                      borderRadius: 0,
-                    }}
+            filteredRepos.map((repo) => (
+              <Card
+                key={repo._id}
+                sx={{
+                  backgroundColor: "#0d1117",
+                  border: "1px solid #30363d",
+                  borderLeft: "none",
+                  borderRight: "none",
+                  borderRadius: 0,
+                }}
+              >
+                <CardContent>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    <CardContent>
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
+                    {/* LEFT SIDE */}
+                    <Box>
+                      <Typography
+                        sx={{
+                          color: "#58a6ff",
+                          fontWeight: 600,
+                          fontSize: 16,
+                        }}
                       >
-                        {/* LEFT SIDE */}
-                        <Box>
-                          <Typography
-                            sx={{
-                              color: "#58a6ff",
-                              fontWeight: 600,
-                              fontSize: 16,
-                            }}
-                          >
-                            {user.username}/
-                            <span style={{ fontWeight: 700 }}>{repo.name}</span>
-                          </Typography>
+                        {user.username}/
+                        <span style={{ fontWeight: 700 }}>{repo.name}</span>
+                      </Typography>
 
-                          <Typography variant="body2" color="#8b949e" mt={0.5}>
-                            {repo.description || "No description"}
-                          </Typography>
-                        </Box>
+                      <Typography variant="body2" color="#8b949e" mt={0.5}>
+                        {repo.description || "No description"}
+                      </Typography>
+                    </Box>
 
-                        {/* RIGHT SIDE */}
-                        <Button
-                          startIcon={<StarIcon />}
-                          variant="outlined"
-                          sx={{
-                            color: "#f1e05a",
-                            borderColor: "#30363d",
-                            textTransform: "none",
-                          }}
-                          onClick={() => toggleUnstar(repo._id)}
-                        >
-                          Unstar
-                        </Button>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                )
-              )
-            )
+                    {/* RIGHT SIDE */}
+                    <Button
+                      startIcon={<StarIcon />}
+                      variant="outlined"
+                      sx={{
+                        color: "#f1e05a",
+                        borderColor: "#30363d",
+                        textTransform: "none",
+                      }}
+                      onClick={() => toggleUnstar(repo._id)}
+                    >
+                      Unstar
+                    </Button>
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))
           )}
         </Box>
       </Box>

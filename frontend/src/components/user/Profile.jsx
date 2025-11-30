@@ -55,7 +55,10 @@ const Profile = () => {
 
           <UnderlineNav.Item
             href=""
-            onClick={() => navigate(`/${userDetails.username}/starRepo`)}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`/${userDetails.username}/starRepo`);
+            }}
             icon={RepoIcon}
             sx={{
               backgroundColor: "transparent",
