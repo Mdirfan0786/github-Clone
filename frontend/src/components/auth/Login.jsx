@@ -7,13 +7,15 @@ import "./auth.css";
 import server from "../../environment";
 
 import logo from "../../assets/github-mark-white.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { setCurrentUser } = useAuth();
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ function Login() {
 
       setLoading(false);
 
-      window.location.href = "/";
+      navigate("/");
     } catch (err) {
       console.error(err);
       alert("Login failed!");

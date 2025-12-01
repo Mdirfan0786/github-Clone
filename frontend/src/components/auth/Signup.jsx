@@ -7,7 +7,7 @@ import "./auth.css";
 import server from "../../environment";
 
 import logo from "../../assets/github-mark-white.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Signup() {
   const [email, setEmail] = useState("");
@@ -16,6 +16,7 @@ function Signup() {
   const [loading, setLoading] = useState(false);
 
   const { setCurrentUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -36,7 +37,7 @@ function Signup() {
 
       setLoading(false);
 
-      window.location.href = "/";
+      navigate("/");
     } catch (err) {
       console.error(err);
       alert("Signup failed!");

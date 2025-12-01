@@ -33,7 +33,7 @@ import ExploreIcon from "@mui/icons-material/Explore";
 import StoreIcon from "@mui/icons-material/Store";
 import CategoryIcon from "@mui/icons-material/Category";
 import CloseIcon from "@mui/icons-material/Close";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../authContext";
 import { useSearch } from "../SearchContext";
@@ -41,6 +41,7 @@ import gitpfp from "../assets/git_pfp.jpg";
 
 export default function Navbar() {
   const userId = localStorage.getItem("userId");
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [anchorAdd, setAnchorAdd] = useState(null);
@@ -55,6 +56,7 @@ export default function Navbar() {
   const openAdd = Boolean(anchorAdd);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const getPageTitle = () => {
     if (location.pathname.includes("profile")) return "Profile";
@@ -392,12 +394,12 @@ export default function Navbar() {
             <Divider sx={{ borderColor: "#30363d" }} />
 
             <MenuItem
-              onClick={() => {
+              onClick={(e) => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("userId");
                 setCurrentUser(null);
 
-                window.location.href("/login");
+                navigate("/login");
               }}
               sx={{
                 color: "#f00",
@@ -407,8 +409,6 @@ export default function Navbar() {
                   color: "#f00",
                 },
               }}
-              component={Link}
-              to="/"
             >
               Sign out
             </MenuItem>
