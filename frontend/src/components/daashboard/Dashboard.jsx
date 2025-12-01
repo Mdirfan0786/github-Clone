@@ -4,12 +4,11 @@ import "./dashboard.css";
 import Navbar from "../navbar";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom";
-import githubLogo from "../../assets/github-mark-white.svg";
 import gitpfp from "../../assets/git_pfp.jpg";
 import { useSearch } from "../../SearchContext";
 import server from "../../environment";
 
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -21,8 +20,10 @@ function Dashboard() {
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
   const [userDetails, setUserDetails] = useState({ username: "Md Irfan" });
   const [searchQuery, setSearchQuery] = useState("");
+
   const [searchResults, setSearchResults] = useState([]);
   const [searchHomeResults, setSearchHomeResults] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const { globalSearch } = useSearch();
 
@@ -45,21 +46,27 @@ function Dashboard() {
     const userId = localStorage.getItem("userId");
 
     const fetchRepositories = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${server}/repo/user/${userId}`);
         setRepositories(response.data.repositories);
         setSearchResults(response.data.repositories);
       } catch (err) {
         console.error("Error while fetching repositories : ", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     const fetchSuggestedRepositories = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${server}/repo/all`);
         setSuggestedRepositories(response.data);
       } catch (err) {
         console.error("Error while fetching suggested repositories : ", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -116,63 +123,96 @@ function Dashboard() {
             />
           </div>
 
-          {searchResults.map((repo) => (
-            <div key={repo._id}>
-              <Link to={`/repo/${userDetails.username}/${repo.name}`}>
-                <h4
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <img
-                    src={gitpfp}
-                    alt="GitHub Logo"
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 20 }}>
+              <CircularProgress size={22} />
+            </Box>
+          ) : searchResults.length === 0 ? (
+            <Box
+              sx={{
+                p: 3,
+                textAlign: "center",
+                opacity: 0.7,
+              }}
+            >
+              “No repository!”
+            </Box>
+          ) : (
+            searchResults.map((repo) => (
+              <div key={repo._id}>
+                <Link to={`/repo/${userDetails.username}/${repo.name}`}>
+                  <h4
                     style={{
-                      width: 20,
-                      marginRight: "0.5rem",
-                      borderRadius: "1.25rem",
+                      display: "flex",
+                      alignItems: "center",
                     }}
-                  />
-                  {userDetails.username}/{repo.name}
-                </h4>
-              </Link>
-            </div>
-          ))}
+                  >
+                    <img
+                      src={gitpfp}
+                      alt="GitHub Logo"
+                      style={{
+                        width: 20,
+                        marginRight: "0.5rem",
+                        borderRadius: "1.25rem",
+                      }}
+                    />
+                    {userDetails.username}/{repo.name}
+                  </h4>
+                </Link>
+              </div>
+            ))
+          )}
         </aside>
 
         {/* Home Section  */}
         <main id="dashboard-main">
           <h2>Home</h2>
 
-          {searchHomeResults.map((repo) => (
-            <Card
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 30 }}>
+              <CircularProgress size={22} />
+            </Box>
+          ) : searchHomeResults.length === 0 ? (
+            <Box
+              my={30}
               sx={{
-                width: "100%",
-                border: "1px solid #30363d",
-                backgroundColor: "#0D1117",
-                color: "#fff",
-                marginBottom: "2rem",
-                borderRadius: "0.8rem",
+                p: 3,
+                textAlign: "center",
+                opacity: 0.7,
               }}
-              key={repo._id}
             >
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {repo.name}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#fff" }}>
-                  {repo.description}
-                </Typography>
-              </CardContent>
+              “Please, Create a repository!”
+            </Box>
+          ) : (
+            searchHomeResults.map((repo) => (
+              <Card
+                sx={{
+                  width: "100%",
+                  border: "1px solid #30363d",
+                  backgroundColor: "#0D1117",
+                  color: "#fff",
+                  marginBottom: "2rem",
+                  borderRadius: "0.8rem",
+                }}
+                key={repo._id}
+              >
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {repo.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "#fff" }}>
+                    {repo.description}
+                  </Typography>
+                </CardContent>
 
-              <CardActions>
-                <Link to={`/repo/${userDetails.username}/${repo.name}`}>
-                  <Button size="small">View Repository</Button>
-                </Link>
-              </CardActions>
-            </Card>
-          ))}
+                <CardActions>
+                  <Link to={`/repo/${userDetails.username}/${repo.name}`}>
+                    <Button size="small">View Repository</Button>
+                  </Link>
+                </CardActions>
+              </Card>
+            ))
+          )}
         </main>
 
         {/* changelog Events  */}
@@ -297,7 +337,14 @@ function Dashboard() {
             </CardContent>
 
             <CardActions>
-              <Button size="small">View changelog</Button>
+              <Button
+                size="small"
+                onClick={() =>
+                  alert("🔥 Changelog: bugs kam hue, confidence bada 😂")
+                }
+              >
+                View changelog
+              </Button>
             </CardActions>
           </Card>
         </aside>

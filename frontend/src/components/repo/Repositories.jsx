@@ -14,6 +14,7 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -21,7 +22,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import gitpfp from "../../assets/git_pfp.jpg";
 
-// LEFT PANEL USER DATA (dummy for now)
+// LEFT PANEL USER DATA (dummy Data for now)
 const user = {
   name: "MD IRFAN",
   username: "Mdirfan0786",
@@ -33,16 +34,17 @@ const user = {
 function Repositories() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuRepo, setMenuRepo] = useState(null);
-
   const [userDetails, setUserDetails] = useState({
     username: "Md Irfan",
     email: "irfan@irfan.com",
   });
+
   const [repositories, setRepositories] = useState([]);
   const [searchRepositories, setSearchRepositories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [starredRepos, setStarredRepos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const toggleStar = async (repoId) => {
     try {
@@ -64,6 +66,7 @@ function Repositories() {
 
   useEffect(() => {
     const fetchStarred = async () => {
+      setLoading(true);
       try {
         const userId = localStorage.getItem("userId");
         const res = await axios.get(`${server}/repo/starred/${userId}`);
@@ -72,6 +75,8 @@ function Repositories() {
         setStarredRepos(starredIds);
       } catch (err) {
         console.error("Error fetching starred repos", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -80,7 +85,7 @@ function Repositories() {
 
   const handleMenuOpen = (event, repoId) => {
     setAnchorEl(event.currentTarget);
-    setMenuRepo(repoId); // jis repo ka menu open hua
+    setMenuRepo(repoId);
   };
 
   const handleMenuClose = () => {
@@ -240,107 +245,121 @@ function Repositories() {
 
           {/* Repo List */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {searchRepositories.map((repo) => (
-              <Box
-                key={repo._id}
-                sx={{
-                  borderBottom: "1px solid #30363d",
-                  pb: 2,
-                  pt: 1,
-                }}
-              >
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  {/* LEFT INFO */}
-                  <Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Typography
-                        sx={{
-                          color: "#58a6ff",
-                          fontSize: 20,
-                          fontWeight: 600,
-                          cursor: "pointer",
-                        }}
-                      >
-                        {repo.name}
-                      </Typography>
-
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 30 }}>
+                <CircularProgress size={22} />
+              </Box>
+            ) : searchRepositories.length === 0 ? (
+              <Typography color="gray" textAlign="center" mt={10}>
+                No repositories yet
+              </Typography>
+            ) : (
+              searchRepositories.map((repo) => (
+                <Box
+                  key={repo._id}
+                  sx={{
+                    borderBottom: "1px solid #30363d",
+                    pb: 2,
+                    pt: 1,
+                  }}
+                >
+                  <Box
+                    sx={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    {/* LEFT INFO */}
+                    <Box>
                       <Box
-                        sx={{
-                          border: "1px solid #444",
-                          px: 1,
-                          borderRadius: "10px",
-                          fontSize: 12,
-                          color: "#adbac7",
-                        }}
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
                       >
-                        {repo.visibility === true ? "Public" : "Private"}
+                        <Typography
+                          sx={{
+                            color: "#58a6ff",
+                            fontSize: 20,
+                            fontWeight: 600,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {repo.name}
+                        </Typography>
+
+                        <Box
+                          sx={{
+                            border: "1px solid #444",
+                            px: 1,
+                            borderRadius: "10px",
+                            fontSize: 12,
+                            color: "#adbac7",
+                          }}
+                        >
+                          {repo.visibility === true ? "Public" : "Private"}
+                        </Box>
                       </Box>
+
+                      <Typography sx={{ color: "#adbac7", mt: 0.5 }}>
+                        {repo.description}
+                      </Typography>
                     </Box>
 
-                    <Typography sx={{ color: "#adbac7", mt: 0.5 }}>
-                      {repo.description}
-                    </Typography>
-                  </Box>
+                    {/* Star + Menu */}
+                    <Box>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          borderColor: "#444",
+                          color: "#adbac7",
+                          textTransform: "none",
+                          mr: 1,
+                        }}
+                        startIcon={
+                          starredRepos.includes(repo._id) ? (
+                            <StarBorderIcon style={{ fill: "yellow" }} />
+                          ) : (
+                            <StarBorderIcon />
+                          )
+                        }
+                        onClick={() => toggleStar(repo._id)}
+                      >
+                        {starredRepos.includes(repo._id) ? "Starred" : "Star"}
+                      </Button>
 
-                  {/* Star + Menu */}
-                  <Box>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        borderColor: "#444",
-                        color: "#adbac7",
-                        textTransform: "none",
-                        mr: 1,
-                      }}
-                      startIcon={
-                        starredRepos.includes(repo._id) ? (
-                          <StarBorderIcon style={{ fill: "yellow" }} />
-                        ) : (
-                          <StarBorderIcon />
-                        )
-                      }
-                      onClick={() => toggleStar(repo._id)}
-                    >
-                      {starredRepos.includes(repo._id) ? "Starred" : "Star"}
-                    </Button>
+                      <IconButton
+                        onClick={(e) => handleMenuOpen(e, repo._id)}
+                        sx={{ color: "#adbac7" }}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
 
-                    <IconButton
-                      onClick={(e) => handleMenuOpen(e, repo._id)}
-                      sx={{ color: "#adbac7" }}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                      PaperProps={{
-                        sx: { bgcolor: "#161b22", color: "#adbac7" },
-                      }}
-                    >
-                      <MenuItem
-                        onClick={() => {
-                          toggleStar(menuRepo);
-                          handleMenuClose();
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                        PaperProps={{
+                          sx: { bgcolor: "#161b22", color: "#adbac7" },
                         }}
                       >
-                        {starredRepos.includes(menuRepo) ? "Unstar" : "Star"}
-                      </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            toggleStar(menuRepo);
+                            handleMenuClose();
+                          }}
+                        >
+                          {starredRepos.includes(menuRepo) ? "Unstar" : "Star"}
+                        </MenuItem>
 
-                      <MenuItem
-                        onClick={() => {
-                          navigator.clipboard.writeText(window.location.href);
-                          handleMenuClose();
-                        }}
-                      >
-                        Copy link
-                      </MenuItem>
-                    </Menu>
+                        <MenuItem
+                          onClick={() => {
+                            navigator.clipboard.writeText(window.location.href);
+                            handleMenuClose();
+                          }}
+                        >
+                          Copy link
+                        </MenuItem>
+                      </Menu>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            ))}
+              ))
+            )}
           </Box>
         </Box>
       </Box>

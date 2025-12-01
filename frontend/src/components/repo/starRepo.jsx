@@ -13,6 +13,7 @@ import {
   Card,
   CardContent,
   Avatar,
+  CircularProgress,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import gitpfp from "../../assets/git_pfp.jpg";
@@ -24,6 +25,7 @@ function Stars() {
     username: "Md Irfan",
     email: "mdirfan@gmail.com",
   });
+  const [loading, setLoading] = useState(true);
 
   // toggiling star
 
@@ -45,6 +47,7 @@ function Stars() {
     const userId = localStorage.getItem("userId");
 
     const fetchData = async () => {
+      setLoading(true);
       try {
         const [starsRes, userRes] = await Promise.all([
           axios.get(`${server}/repo/starred/${userId}`),
@@ -55,6 +58,8 @@ function Stars() {
         setUser(userRes.data);
       } catch (err) {
         console.error("Error loading stars page:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -167,7 +172,11 @@ function Stars() {
           </Stack>
 
           {/* STARRED REPOSITORIES */}
-          {filteredRepos.length === 0 ? (
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 30 }}>
+              <CircularProgress size={22} />
+            </Box>
+          ) : filteredRepos.length === 0 ? (
             <Typography color="gray" textAlign="center" mt={10}>
               No starred repositories yet
             </Typography>

@@ -6,6 +6,7 @@ import {
   Avatar,
   Chip,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -17,9 +18,11 @@ import server from "../../environment";
 
 function ViewRepo() {
   const { name } = useParams();
+  const frontServer = "https://github-clone-frontend-izc1.onrender.com";
 
   const [repo, setRepo] = useState(null);
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([""]);
+  const [loading, setLoading] = useState(true);
 
   // Fetching starred repository and togglinh star/unstar
   const [starredRepos, setStarredRepos] = useState([]);
@@ -27,6 +30,7 @@ function ViewRepo() {
   const toggleStar = async (repoId) => {
     try {
       const userId = localStorage.getItem("userId");
+      console.log("userID : ", userId);
 
       await axios.post(`${server}/repo/star/${repoId}`, {
         userId,
@@ -44,6 +48,7 @@ function ViewRepo() {
 
   useEffect(() => {
     const fetchStarred = async () => {
+      setLoading(true);
       try {
         const userId = localStorage.getItem("userId");
 
@@ -53,6 +58,8 @@ function ViewRepo() {
         setStarredRepos(starredIds);
       } catch (err) {
         console.error("failed to fetch starred repos! : ", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -64,6 +71,8 @@ function ViewRepo() {
       try {
         const res = await axios.get(`${server}/repo/name/${name}`);
         const repository = res.data[0];
+
+        console.log(repository.content);
 
         setRepo(repository);
         setFiles(repository.content || []);
@@ -77,7 +86,7 @@ function ViewRepo() {
 
   const copyCloneUrl = () => {
     navigator.clipboard.writeText(
-      `${server}/${repo.owner.username}/${repo.name}`
+      `${frontServer}/#/repo/${repo.owner.username}/${repo.name}`
     );
   };
 
@@ -142,20 +151,36 @@ function ViewRepo() {
               variant="outlined"
               size="small"
               startIcon={
-                starredRepos.includes(repo?.owner?._id) ? (
+                starredRepos.includes(repo?._id) ? (
                   <StarBorderIcon style={{ fill: "yellow" }} />
                 ) : (
                   <StarBorderIcon />
                 )
               }
-              onClick={() => toggleStar(repo?.owner?._id)}
+              onClick={() => toggleStar(repo?._id)}
             >
-              {starredRepos.includes(repo?.owner?._id) ? "Starred" : "Star"}
+              {starredRepos.includes(repo?._id) ? "Starred" : "Star"}
             </Button>
-            <Button variant="outlined" size="small">
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() =>
+                alert(
+                  "🚧 Feature under development bhai 😅 Learner hu, bakas de!"
+                )
+              }
+            >
               🍴 Fork
             </Button>
-            <Button variant="outlined" size="small">
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() =>
+                alert(
+                  "🚧 Feature under development bhai 😅 Learner hu, bakas de!"
+                )
+              }
+            >
               👁 Watch
             </Button>
           </Box>
@@ -173,7 +198,7 @@ function ViewRepo() {
             }}
           >
             <Typography variant="body2" sx={{ opacity: 0.8 }}>
-              {`${server}`}/{repo?.owner?.username}/{repo?.name}
+              {`${frontServer}`}/#/repo/{repo?.owner?.username}/{repo?.name}
             </Typography>
             <IconButton size="small" onClick={copyCloneUrl}>
               <ContentCopyIcon sx={{ fontSize: 16, color: "#c9d1d9" }} />
@@ -224,9 +249,13 @@ function ViewRepo() {
             Files
           </Box>
 
-          {files.length === 0 ? (
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <CircularProgress size={22} />
+            </Box>
+          ) : files.length === 0 ? (
             <Box sx={{ p: 3, textAlign: "center", opacity: 0.7 }}>
-              No files found in this repository.
+              “0 files found — Developer abhi coffee peene gaya hai ☕”
             </Box>
           ) : (
             files.map((file) => (
