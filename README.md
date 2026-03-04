@@ -6,6 +6,13 @@ The application allows users to initialize repositories, stage files, create com
 
 It also provides a GitHub-style user interface for interacting with repositories and viewing commit history.
 
+## 🌐 Live Demo
+
+The project is deployed and accessible online.
+
+👉 **Live Application:**  
+https://github-clone-frontend-izc1.onrender.com
+
 ## 🚀 Features
 
 - GitHub-style repository interface
@@ -146,4 +153,5 @@ GitHub
 https://github.com/Mdirfan0786
 
 LinkedIn  
+https://www.linkedin.com/in/md-irfan-2623b4210/
 
