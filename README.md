@@ -28,6 +28,7 @@ https://github-clone-frontend-izc1.onrender.com
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - React (Vite)
 - React Router
 - Axios
@@ -36,6 +37,7 @@ https://github-clone-frontend-izc1.onrender.com
 - React Heat Map
 
 ### Backend
+
 - Node.js
 - Express.js
 - MongoDB
@@ -44,12 +46,15 @@ https://github-clone-frontend-izc1.onrender.com
 - bcryptjs
 
 ### Real-time
+
 - Socket.io
 
 ### Cloud Services
+
 - AWS S3
 
 ### CLI Tools
+
 - Yargs
 
 ## ⚙️ Custom Git Commands
@@ -77,19 +82,19 @@ node app.js push
 Apna_GitHub_clone
 │
 ├── backend
-│   ├── controllers
-│   ├── models
-│   ├── routes
-│   ├── config
-│   │   └── aws-config.js
-│   └── app.js
+│ ├── controllers
+│ ├── models
+│ ├── routes
+│ ├── config
+│ │ └── aws-config.js
+│ └── app.js
 │
 ├── frontend
-│   ├── src
-│   │   ├── components
-│   │   ├── authContext
-│   │   ├── routes
-│   │   └── main.jsx
+│ ├── src
+│ │ ├── components
+│ │ ├── authContext
+│ │ ├── routes
+│ │ └── main.jsx
 │
 └── README.md
 
@@ -109,7 +114,6 @@ S3_BUCKET=your_bucket_name
 
 FRONTEND_URL=http://localhost:5173
 
-
 ## ⚙️ Installation
 
 Clone the repository
@@ -119,7 +123,6 @@ git clone https://github.com/Mdirfan0786/github-Clone.git
 Go to project folder
 
 cd Apna_GitHub_clone
-
 
 #Backend Setup
 
@@ -144,7 +147,6 @@ cd frontend
 npm install
 npm run dev
 
-
 ## 👨‍💻 Author
 
 MD IRFAN
@@ -155,3 +157,5 @@ https://github.com/Mdirfan0786
 LinkedIn  
 https://www.linkedin.com/in/md-irfan-2623b4210/
 
+portfolio
+Portfolio: https://apna-portfolio-drab.vercel.app/
